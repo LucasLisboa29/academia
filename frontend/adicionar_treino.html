@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitCode — Criar Treino</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #080808; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Barlow', sans-serif; }
+
+    .phone { width: 380px; min-height: 780px; background: #0d0d0d; border-radius: 40px; overflow: hidden; display: flex; flex-direction: column; padding: 32px 0 40px; border: 1.5px solid #1e1e1e; }
+
+    .topbar { display: flex; align-items: center; gap: 14px; padding: 0 24px 24px; }
+    .back-btn { width: 36px; height: 36px; border-radius: 10px; background: #141414; border: 1px solid #222; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; cursor: pointer; text-decoration: none; }
+    .screen-title { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 700; color: #fff; }
+
+    .content { padding: 0 20px; flex: 1; overflow-y: auto; }
+
+    .input-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #444; margin-bottom: 8px; display: block; }
+    input[type="text"] { width: 100%; height: 50px; background: #141414; border: 1px solid #242424; border-radius: 12px; padding: 0 16px; font-size: 15px; color: #e0e0e0; font-family: 'Barlow', sans-serif; outline: none; margin-bottom: 20px; transition: border-color 0.2s; }
+    input[type="text"]:focus { border-color: #E8400060; }
+    input[type="text"]::placeholder { color: #333; }
+
+    .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: #444; margin-bottom: 12px; }
+
+    .exercicios-adicionados { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .ex-adicionado { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .ex-ad-nome { font-size: 14px; font-weight: 600; color: #ddd; }
+    .ex-ad-meta { font-size: 11px; color: #555; margin-top: 3px; }
+    .ex-ad-grupo { font-size: 10px; color: #E84000; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .btn-remover { background: none; border: none; color: #333; font-size: 18px; cursor: pointer; transition: color 0.2s; padding: 4px; }
+    .btn-remover:hover { color: #E84000; }
+
+    .btn-add-ex { width: 100%; height: 48px; background: transparent; border: 1px dashed #2a2a2a; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: #555; cursor: pointer; margin-bottom: 20px; transition: border-color 0.2s, color 0.2s; }
+    .btn-add-ex:hover { border-color: #E8400050; color: #E84000; }
+    .btn-add-ex .plus { font-size: 20px; color: #E84000; }
+
+    .btn-salvar { width: 100%; height: 52px; background: #E84000; border: none; border-radius: 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; cursor: pointer; transition: background 0.2s; }
+    .btn-salvar:hover { background: #cc3700; }
+
+    /* OVERLAY */
+    .overlay { display: none; position: fixed; inset: 0; background: #00000099; z-index: 100; align-items: flex-end; justify-content: center; }
+    .overlay.aberto { display: flex; }
+    .popup { width: 380px; background: #131313; border-radius: 24px 24px 0 0; padding: 24px 24px 36px; border: 1px solid #222; border-bottom: none; max-height: 85vh; display: flex; flex-direction: column; }
+    .popup-handle { width: 40px; height: 4px; background: #2a2a2a; border-radius: 2px; margin: 0 auto 18px; flex-shrink: 0; }
+    .popup-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 14px; flex-shrink: 0; }
+
+    .busca-input { width: 100%; height: 44px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 0 14px; font-size: 14px; color: #e0e0e0; font-family: 'Barlow', sans-serif; outline: none; margin-bottom: 14px; flex-shrink: 0; transition: border-color 0.2s; }
+    .busca-input:focus { border-color: #E8400060; }
+    .busca-input::placeholder { color: #444; }
+
+    .grupos-scroll { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 14px; padding-bottom: 4px; flex-shrink: 0; }
+    .grupos-scroll::-webkit-scrollbar { height: 3px; }
+    .grupos-scroll::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .grupo-btn { padding: 6px 14px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px; font-size: 11px; color: #666; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .grupo-btn.ativo { background: #E8400020; border-color: #E84000; color: #E84000; }
+
+    .resultados { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .resultado-item { background: #1a1a1a; border: 1px solid #222; border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: border-color 0.2s, background 0.2s; display: flex; align-items: center; justify-content: space-between; }
+    .resultado-item:hover { border-color: #E8400050; background: #1a0f0a; }
+    .resultado-nome { font-size: 14px; font-weight: 600; color: #ddd; }
+    .resultado-grupo { font-size: 10px; color: #555; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .resultado-plus { font-size: 20px; color: #E84000; }
+
+    .vazio-busca { font-size: 13px; color: #444; text-align: center; padding: 20px 0; }
+
+    /* POPUP CONFIGURAR EXERCICIO */
+    .overlay2 { display: none; position: fixed; inset: 0; background: #00000099; z-index: 200; align-items: flex-end; justify-content: center; }
+    .overlay2.aberto { display: flex; }
+    .popup2 { width: 380px; background: #131313; border-radius: 24px 24px 0 0; padding: 24px 24px 36px; border: 1px solid #222; border-bottom: none; }
+    .popup2-handle { width: 40px; height: 4px; background: #2a2a2a; border-radius: 2px; margin: 0 auto 18px; }
+    .popup2-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .popup2-grupo { font-size: 10px; color: #E84000; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    .popup-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+    .input-wrap { display: flex; flex-direction: column; gap: 5px; }
+    .input-wrap label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: #444; }
+    .input-wrap input { height: 44px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 0 10px; font-size: 15px; font-family: 'Barlow', sans-serif; color: #e0e0e0; outline: none; transition: border-color 0.2s; }
+    .input-wrap input:focus { border-color: #E8400060; }
+    .btn-confirmar { width: 100%; height: 46px; background: #E84000; border: none; border-radius: 10px; font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; color: #fff; cursor: pointer; text-transform: uppercase; letter-spacing: 0.08em; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="topbar">
+      <a class="back-btn" href="home.html">←</a>
+      <div class="screen-title">Criar Treino</div>
+    </div>
+
+    <div class="content">
+      <label class="input-label">Nome do treino</label>
+      <input type="text" id="nome-treino" placeholder="Ex: Treino de peito e tríceps" />
+
+      <div class="section-label">Exercícios adicionados</div>
+      <div class="exercicios-adicionados" id="lista-adicionados">
+        <div style="font-size:13px; color:#333; padding: 4px 0;">Nenhum exercício adicionado ainda.</div>
+      </div>
+
+      <button class="btn-add-ex" onclick="abrirBusca()">
+        <span class="plus">+</span> Adicionar exercício
+      </button>
+
+      <button class="btn-salvar" onclick="salvarTreino()">Salvar Treino</button>
+    </div>
+  </div>
+
+  <!-- OVERLAY DE BUSCA -->
+  <div class="overlay" id="overlay-busca" onclick="fecharBusca(event)">
+    <div class="popup">
+      <div class="popup-handle"></div>
+      <div class="popup-title">Buscar Exercício</div>
+      <input class="busca-input" type="text" id="campo-busca" placeholder="Digite para buscar..." oninput="buscar()" />
+      <div class="grupos-scroll" id="grupos-scroll"></div>
+      <div class="resultados" id="resultados"></div>
+    </div>
+  </div>
+
+  <!-- OVERLAY DE CONFIGURAÇÃO DO EXERCÍCIO -->
+  <div class="overlay2" id="overlay-config">
+    <div class="popup2">
+      <div class="popup2-handle"></div>
+      <div class="popup2-title" id="config-nome">Exercício</div>
+      <div class="popup2-grupo" id="config-grupo"></div>
+      <div class="popup-grid">
+        <div class="input-wrap">
+          <label>Séries</label>
+          <input type="number" id="config-series" value="3" min="1" />
+        </div>
+        <div class="input-wrap">
+          <label>Carga (kg)</label>
+          <input type="number" id="config-carga" value="0" min="0" step="0.5" />
+        </div>
+        <div class="input-wrap">
+          <label>Reps</label>
+          <input type="number" id="config-reps" value="12" min="1" />
+        </div>
+      </div>
+      <button class="btn-confirmar" onclick="confirmarExercicio()">Adicionar ao Treino</button>
+    </div>
+  </div>
+
+  <script>
+    const id = localStorage.getItem('usuario_id');
+    if (!id) window.location.href = 'index.html';
+
+    let exercicios = [];
+    let catalogo = [];
+    let grupoAtivo = 'Todos';
+    let exSelecionado = null;
+
+    async function carregarCatalogo() {
+      try {
+        const resp = await fetch('http://localhost:5000/catalogo');
+        catalogo = await resp.json();
+        renderGrupos();
+        renderResultados(catalogo);
+      } catch (e) {}
+    }
+
+    function renderGrupos() {
+      const grupos = ['Todos', ...new Set(catalogo.map(e => e.grupo))];
+      const scroll = document.getElementById('grupos-scroll');
+      scroll.innerHTML = '';
+      grupos.forEach(g => {
+        const btn = document.createElement('button');
+        btn.className = 'grupo-btn' + (g === grupoAtivo ? ' ativo' : '');
+        btn.textContent = g;
+        btn.onclick = () => {
+          grupoAtivo = g;
+          document.querySelectorAll('.grupo-btn').forEach(b => b.classList.remove('ativo'));
+          btn.classList.add('ativo');
+          buscar();
+        };
+        scroll.appendChild(btn);
+      });
+    }
+
+    function buscar() {
+      const termo = document.getElementById('campo-busca').value.toLowerCase();
+      let filtrado = catalogo.filter(e => e.nome.toLowerCase().includes(termo));
+      if (grupoAtivo !== 'Todos') filtrado = filtrado.filter(e => e.grupo === grupoAtivo);
+      renderResultados(filtrado);
+    }
+
+    function renderResultados(lista) {
+      const container = document.getElementById('resultados');
+      container.innerHTML = '';
+
+      if (lista.length === 0) {
+        container.innerHTML = '<div class="vazio-busca">Nenhum exercício encontrado.<br><span style="color:#E84000; cursor:pointer" onclick="adicionarPersonalizado()">+ Adicionar exercício personalizado</span></div>';
+        return;
+      }
+
+      lista.forEach(ex => {
+        const item = document.createElement('div');
+        item.className = 'resultado-item';
+        item.innerHTML = `
+          <div>
+            <div class="resultado-nome">${ex.nome}</div>
+            <div class="resultado-grupo">${ex.grupo}</div>
+          </div>
+          <div class="resultado-plus">+</div>
+        `;
+        item.onclick = () => abrirConfig(ex);
+        container.appendChild(item);
+      });
+    }
+
+    function adicionarPersonalizado() {
+      const termo = document.getElementById('campo-busca').value;
+      abrirConfig({ nome: termo, grupo: 'Personalizado' });
+    }
+
+    function abrirBusca() {
+      document.getElementById('campo-busca').value = '';
+      grupoAtivo = 'Todos';
+      renderGrupos();
+      renderResultados(catalogo);
+      document.getElementById('overlay-busca').classList.add('aberto');
+    }
+
+    function fecharBusca(e) {
+      if (!e || e.target === document.getElementById('overlay-busca')) {
+        document.getElementById('overlay-busca').classList.remove('aberto');
+      }
+    }
+
+    function abrirConfig(ex) {
+      exSelecionado = ex;
+      document.getElementById('config-nome').textContent = ex.nome;
+      document.getElementById('config-grupo').textContent = ex.grupo;
+      document.getElementById('config-series').value = 3;
+      document.getElementById('config-carga').value = 0;
+      document.getElementById('config-reps').value = 12;
+      document.getElementById('overlay-busca').classList.remove('aberto');
+      document.getElementById('overlay-config').classList.add('aberto');
+    }
+
+    function confirmarExercicio() {
+      const series = parseInt(document.getElementById('config-series').value) || 3;
+      const carga = parseFloat(document.getElementById('config-carga').value) || 0;
+      const reps = parseInt(document.getElementById('config-reps').value) || 12;
+
+      exercicios.push({
+        nome: exSelecionado.nome,
+        grupo: exSelecionado.grupo,
+        series, carga, repeticoes: reps
+      });
+
+      document.getElementById('overlay-config').classList.remove('aberto');
+      renderLista();
+    }
+
+    function renderLista() {
+      const lista = document.getElementById('lista-adicionados');
+      lista.innerHTML = '';
+
+      if (exercicios.length === 0) {
+        lista.innerHTML = '<div style="font-size:13px; color:#333; padding: 4px 0;">Nenhum exercício adicionado ainda.</div>';
+        return;
+      }
+
+      exercicios.forEach((ex, i) => {
+        const item = document.createElement('div');
+        item.className = 'ex-adicionado';
+        item.innerHTML = `
+          <div>
+            <div class="ex-ad-grupo">${ex.grupo}</div>
+            <div class="ex-ad-nome">${ex.nome}</div>
+            <div class="ex-ad-meta">${ex.series} séries · ${ex.carga}kg · ${ex.repeticoes} reps</div>
+          </div>
+          <button class="btn-remover" onclick="remover(${i})">✕</button>
+        `;
+        lista.appendChild(item);
+      });
+    }
+
+    function remover(i) {
+      exercicios.splice(i, 1);
+      renderLista();
+    }
+
+    async function salvarTreino() {
+      const nome = document.getElementById('nome-treino').value.trim();
+      if (!nome) { alert('Dê um nome ao treino.'); return; }
+      if (exercicios.length === 0) { alert('Adicione pelo menos um exercício.'); return; }
+
+      try {
+        const resp = await fetch('http://localhost:5000/treinos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usuario_id: id, nome, exercicios })
+        });
+        const dados = await resp.json();
+        if (dados.sucesso) {
+          alert('Treino salvo com sucesso!');
+          window.location.href = 'home.html';
+        }
+      } catch (e) { alert('Erro ao salvar treino.'); }
+    }
+
+    carregarCatalogo();
+  </script>
+</body>
+</html>

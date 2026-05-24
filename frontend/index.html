@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitCode — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #080808;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Barlow', sans-serif;
+    }
+
+    .phone {
+      width: 380px;
+      min-height: 780px;
+      background: #0d0d0d;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 48px 28px 40px;
+      border: 1.5px solid #1e1e1e;
+    }
+
+    .accent-circle {
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #E8400025 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .accent-circle-2 {
+      position: absolute;
+      bottom: -100px;
+      left: -60px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #E8400015 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+
+    .logo span { color: #E84000; }
+
+    .tagline {
+      font-size: 11px;
+      color: #444;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 60px;
+    }
+
+    .login-title {
+      font-size: 26px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .login-sub {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 32px;
+    }
+
+    .input-group { margin-bottom: 16px; }
+
+    .input-label {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      height: 50px;
+      background: #141414;
+      border: 1px solid #242424;
+      border-radius: 12px;
+      padding: 0 16px;
+      font-size: 15px;
+      color: #e0e0e0;
+      font-family: 'Barlow', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus { border-color: #E8400060; }
+    input::placeholder { color: #444; }
+
+    .btn-entrar {
+      width: 100%;
+      height: 52px;
+      background: #E84000;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 28px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-entrar:hover { background: #cc3700; }
+    .btn-entrar:active { transform: scale(0.98); }
+
+    .erro-msg {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: #1a0808;
+      border: 1px solid #E8400040;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #E84000;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="accent-circle"></div>
+    <div class="accent-circle-2"></div>
+
+    <div class="logo">FIT<span>CODE</span></div>
+    <div class="tagline">Seu treino, sua linguagem</div>
+
+    <div class="login-title">Entrar</div>
+    <div class="login-sub">Use seu CPF para acessar</div>
+
+    <div class="input-group">
+      <label class="input-label">CPF</label>
+      <input type="text" id="cpf" placeholder="00000000000" maxlength="11" />
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Senha</label>
+      <input type="password" id="senha" placeholder="••••••••" />
+    </div>
+
+    <button class="btn-entrar" onclick="fazerLogin()">Entrar</button>
+    <div class="erro-msg" id="erro">CPF ou senha incorretos. Tente novamente.</div>
+  </div>
+
+  <script>
+    async function fazerLogin() {
+      const cpf = document.getElementById('cpf').value.trim();
+      const senha = document.getElementById('senha').value.trim();
+      const erro = document.getElementById('erro');
+
+      erro.style.display = 'none';
+
+      try {
+        const resposta = await fetch('http://localhost:5000/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cpf, senha })
+        });
+
+        const dados = await resposta.json();
+
+        if (dados.sucesso) {
+          localStorage.setItem('usuario_id', dados.id);
+          localStorage.setItem('usuario_nome', dados.nome);
+          window.location.href = 'home.html';
+        } else {
+          erro.style.display = 'block';
+        }
+      } catch (e) {
+        erro.textContent = 'Erro ao conectar com o servidor.';
+        erro.style.display = 'block';
+      }
+    }
+
+    document.getElementById('senha').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') fazerLogin();
+    });
+  </script>
+</body>
+</html>
