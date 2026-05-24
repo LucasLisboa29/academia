@@ -172,6 +172,7 @@
 
     .btn-sair:hover { background: #E8400015; }
   </style>
+  <script src="config.js"></script>
 </head>
 <body>
   <div class="phone">
@@ -221,7 +222,7 @@
 
     async function carregarPerfil() {
       try {
-        const resp = await fetch(`http://localhost:5000/usuario/${id}`);
+        const resp = await fetch(`${API}/usuario/${id}`);
         const dados = await resp.json();
 
         const iniciais = dados.nome.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();

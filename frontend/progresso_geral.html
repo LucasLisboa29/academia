@@ -48,6 +48,7 @@
 
     .vazio-msg { font-size: 13px; color: #444; text-align: center; padding: 20px 0; }
   </style>
+  <script src="config.js"></script>
 </head>
 <body>
   <div class="phone">
@@ -104,7 +105,7 @@
 
     async function carregarProgresso() {
       try {
-        const resp = await fetch(`http://localhost:5000/progresso_geral/${id}`);
+        const resp = await fetch(`${API}/progresso_geral/${id}`);
         const dados = await resp.json();
 
         // Stats principais

@@ -196,6 +196,7 @@
       color: #E84000;
     }
   </style>
+  <script src="config.js"></script>
 </head>
 <body>
   <div class="phone">
@@ -255,13 +256,13 @@
 
     async function carregarDados() {
       try {
-        const resp = await fetch(`http://localhost:5000/usuario/${id}`);
+        const resp = await fetch(`${API}/usuario/${id}`);
         const dados = await resp.json();
         document.getElementById('streak-num').textContent = dados.frequencia || 0;
       } catch (e) {}
 
       try {
-        const resp = await fetch('http://localhost:5000/avisos');
+        const resp = await fetch('${API}/avisos');
         const dados = await resp.json();
         if (dados.length > 0) {
           document.getElementById('aviso-texto').textContent = dados[0].mensagem;
@@ -275,7 +276,7 @@
 
     async function carregarMeusTreinos() {
         try {
-            const resp = await fetch(`http://localhost:5000/meus_treinos/${id}`);
+            const resp = await fetch(`${API}/meus_treinos/${id}`);
             const treinos = await resp.json();
 
             if (treinos.length === 0) return;
@@ -312,7 +313,7 @@
         event.preventDefault();
         if (!confirm('Apagar este treino?')) return;
         try {
-            const resp = await fetch(`http://localhost:5000/treinos/${treinoId}`, {
+            const resp = await fetch(`${API}/treinos/${treinoId}`, {
                 method: 'DELETE'
             });
             const dados = await resp.json();

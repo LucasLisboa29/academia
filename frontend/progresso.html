@@ -29,6 +29,7 @@
     .hist-unit { font-size: 10px; color: #555; }
     .vazio { font-size: 13px; color: #444; padding: 20px 0; text-align: center; }
   </style>
+  <script src="config.js"></script>
 </head>
 <body>
   <div class="phone">
@@ -64,7 +65,7 @@
 
     async function carregarHistorico() {
       try {
-        const resp = await fetch(`http://localhost:5000/historico/${id}?treino=${treinoFiltro || ''}`);
+        const resp = await fetch(`${API}/historico/${id}?treino=${treinoFiltro || ''}`);
         historico = await resp.json();
 
         const exercicios = Object.keys(historico);

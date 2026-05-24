@@ -79,6 +79,7 @@
     .input-wrap input:focus { border-color: #E8400060; }
     .btn-confirmar { width: 100%; height: 46px; background: #E84000; border: none; border-radius: 10px; font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; color: #fff; cursor: pointer; text-transform: uppercase; letter-spacing: 0.08em; }
   </style>
+  <script src="config.js"></script>
 </head>
 <body>
   <div class="phone">
@@ -150,7 +151,7 @@
 
     async function carregarCatalogo() {
       try {
-        const resp = await fetch('http://localhost:5000/catalogo');
+        const resp = await fetch('${API}/catalogo');
         catalogo = await resp.json();
         renderGrupos();
         renderResultados(catalogo);
@@ -286,7 +287,7 @@
       if (exercicios.length === 0) { alert('Adicione pelo menos um exercício.'); return; }
 
       try {
-        const resp = await fetch('http://localhost:5000/treinos', {
+        const resp = await fetch('${API}/treinos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ usuario_id: id, nome, exercicios })
