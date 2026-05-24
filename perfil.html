@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitCode — Perfil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #080808;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Barlow', sans-serif;
+    }
+
+    .phone {
+      width: 380px;
+      min-height: 780px;
+      background: #0d0d0d;
+      border-radius: 40px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 32px 0 40px;
+      border: 1.5px solid #1e1e1e;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 24px 28px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #141414;
+      border: 1px solid #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #fff;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .screen-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .perfil-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 24px 28px;
+    }
+
+    .avatar-grande {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #E84000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 14px;
+      border: 3px solid #1e1e1e;
+    }
+
+    .perfil-nome {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .perfil-cpf {
+      font-size: 12px;
+      color: #444;
+      letter-spacing: 0.08em;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      padding: 0 20px 28px;
+    }
+
+    .stat-card {
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 14px;
+      padding: 16px 12px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #444;
+      margin-bottom: 8px;
+    }
+
+    .stat-val {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #E84000;
+    }
+
+    .stat-unit {
+      font-size: 10px;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #1a1a1a;
+      margin: 0 24px 24px;
+    }
+
+    .btn-progresso {
+      margin: 0 20px;
+      height: 52px;
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #555;
+      gap: 10px;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    .btn-sair {
+      margin: 0 20px;
+      height: 52px;
+      background: transparent;
+      border: 1px solid #E8400030;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #E84000;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-sair:hover { background: #E8400015; }
+  </style>
+  <script src="config.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="topbar">
+      <a class="back-btn" href="home.html">←</a>
+      <div class="screen-title">Perfil</div>
+    </div>
+
+    <div class="perfil-header">
+      <div class="avatar-grande" id="avatar-iniciais">?</div>
+      <div class="perfil-nome" id="perfil-nome">Carregando...</div>
+      <div class="perfil-cpf" id="perfil-cpf"></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Peso</div>
+        <div class="stat-val" id="stat-peso">—</div>
+        <div class="stat-unit">kg</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Altura</div>
+        <div class="stat-val" id="stat-altura">—</div>
+        <div class="stat-unit">m</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Idade</div>
+        <div class="stat-val" id="stat-idade">—</div>
+        <div class="stat-unit">anos</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <a class="btn-progresso" href="progresso_geral.html">
+        📊 Visualizar progresso
+    </a>
+
+    <a class="btn-sair" href="index.html" onclick="sair()">
+      Sair da conta
+    </a>
+  </div>
+
+  <script>
+    const id = localStorage.getItem('usuario_id');
+    if (!id) window.location.href = 'index.html';
+
+    async function carregarPerfil() {
+      try {
+        const resp = await fetch(`${API}/usuario/${id}`);
+        const dados = await resp.json();
+
+        const iniciais = dados.nome.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+        document.getElementById('avatar-iniciais').textContent = iniciais;
+        document.getElementById('perfil-nome').textContent = dados.nome;
+        document.getElementById('perfil-cpf').textContent = dados.cpf;
+        document.getElementById('stat-peso').textContent = dados.peso || '—';
+        document.getElementById('stat-altura').textContent = dados.altura || '—';
+        document.getElementById('stat-idade').textContent = dados.idade || '—';
+      } catch (e) {
+        document.getElementById('perfil-nome').textContent = localStorage.getItem('usuario_nome');
+      }
+    }
+
+    function sair() {
+      localStorage.clear();
+    }
+
+    carregarPerfil();
+  </script>
+</body>
+</html>

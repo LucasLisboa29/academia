@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitCode — Progresso Geral</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #080808; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Barlow', sans-serif; }
+
+    .phone { width: 380px; min-height: 780px; background: #0d0d0d; border-radius: 40px; overflow: hidden; display: flex; flex-direction: column; padding: 32px 0 32px; border: 1.5px solid #1e1e1e; }
+
+    .topbar { display: flex; align-items: center; gap: 14px; padding: 0 24px 24px; }
+    .back-btn { width: 36px; height: 36px; border-radius: 10px; background: #141414; border: 1px solid #222; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; cursor: pointer; text-decoration: none; }
+    .screen-title { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 700; color: #fff; }
+
+    .content { padding: 0 20px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+
+    /* Cards de stats */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stat-card { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 16px; }
+    .stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #444; margin-bottom: 8px; }
+    .stat-val { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 700; color: #E84000; line-height: 1; }
+    .stat-unit { font-size: 11px; color: #555; margin-top: 4px; }
+
+    .stat-card.destaque { border-color: #E8400030; grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; }
+    .destaque-icon { font-size: 32px; }
+    .destaque-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #444; margin-bottom: 4px; }
+    .destaque-val { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: #fff; }
+
+    /* Frequência semanal */
+    .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: #444; margin-bottom: 10px; }
+
+    .freq-grid { display: flex; gap: 8px; align-items: flex-end; height: 80px; }
+    .freq-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; justify-content: flex-end; }
+    .freq-bar { width: 100%; background: #E84000; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.4s; }
+    .freq-bar.vazio { background: #1e1e1e; }
+    .freq-semana { font-size: 9px; color: #555; text-transform: uppercase; }
+    .freq-num { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; color: #E84000; }
+    .freq-num.vazio { color: #333; }
+
+    /* Gráfico evolução */
+    .chart-card { background: #111; border: 1px solid #1e1e1e; border-radius: 16px; padding: 16px; }
+    .chart-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .chart-sub { font-size: 11px; color: #444; margin-bottom: 14px; }
+
+    .vazio-msg { font-size: 13px; color: #444; text-align: center; padding: 20px 0; }
+  </style>
+  <script src="config.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="topbar">
+      <a class="back-btn" href="perfil.html">←</a>
+      <div class="screen-title">Progresso Geral</div>
+    </div>
+
+    <div class="content">
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total de treinos</div>
+          <div class="stat-val" id="total-treinos">—</div>
+          <div class="stat-unit">sessões</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Essa semana</div>
+          <div class="stat-val" id="essa-semana">—</div>
+          <div class="stat-unit">treinos</div>
+        </div>
+        <div class="stat-card destaque">
+          <div class="destaque-info">
+            <div class="destaque-label">Treino favorito</div>
+            <div class="destaque-val" id="favorito">—</div>
+          </div>
+          <div class="destaque-icon">🏆</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Frequência nas últimas semanas</div>
+        <div class="freq-grid" id="freq-grid">
+          <div class="vazio-msg">Carregando...</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Evolução da carga média</div>
+        <div class="chart-card" id="chart-card" style="display:none">
+          <div class="chart-title">Carga média por sessão</div>
+          <div class="chart-sub">Média de todos os exercícios registrados</div>
+          <canvas id="meuChart" height="160"></canvas>
+        </div>
+        <div class="vazio-msg" id="vazio-chart">Registre treinos para ver sua evolução.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const id = localStorage.getItem('usuario_id');
+    if (!id) window.location.href = 'index.html';
+
+    async function carregarProgresso() {
+      try {
+        const resp = await fetch(`${API}/progresso_geral/${id}`);
+        const dados = await resp.json();
+
+        // Stats principais
+        document.getElementById('total-treinos').textContent = dados.total_treinos;
+        document.getElementById('favorito').textContent = dados.favorito;
+
+        // Essa semana
+        const essaSemana = dados.por_semana.length > 0 ? dados.por_semana[0].total : 0;
+        document.getElementById('essa-semana').textContent = essaSemana;
+
+        // Frequência semanal — barras
+        const freqGrid = document.getElementById('freq-grid');
+        freqGrid.innerHTML = '';
+
+        if (dados.por_semana.length === 0) {
+          freqGrid.innerHTML = '<div class="vazio-msg">Nenhum treino registrado ainda.</div>';
+        } else {
+          const maxVal = Math.max(...dados.por_semana.map(s => s.total));
+          const semanas = [...dados.por_semana].reverse();
+
+          semanas.forEach((s, i) => {
+            const altura = maxVal > 0 ? (s.total / maxVal) * 60 : 4;
+            const data = new Date(s.semana);
+            const label = `${data.getDate()}/${data.getMonth() + 1}`;
+            const wrap = document.createElement('div');
+            wrap.className = 'freq-bar-wrap';
+            wrap.innerHTML = `
+              <div class="freq-num ${s.total === 0 ? 'vazio' : ''}">${s.total}</div>
+              <div class="freq-bar ${s.total === 0 ? 'vazio' : ''}" style="height:${altura}px"></div>
+              <div class="freq-semana">${label}</div>
+            `;
+            freqGrid.appendChild(wrap);
+          });
+        }
+
+        // Gráfico de evolução de carga
+        if (dados.evolucao.length > 0) {
+          document.getElementById('chart-card').style.display = 'block';
+          document.getElementById('vazio-chart').style.display = 'none';
+
+          const labels = dados.evolucao.map(e => {
+            const d = new Date(e.data);
+            return `${d.getDate()}/${d.getMonth() + 1}`;
+          });
+          const cargas = dados.evolucao.map(e => parseFloat(e.media_carga.toFixed(1)));
+
+          const ctx = document.getElementById('meuChart').getContext('2d');
+          new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels,
+              datasets: [{
+                data: cargas,
+                borderColor: '#E84000',
+                backgroundColor: '#E8400020',
+                borderWidth: 2,
+                pointBackgroundColor: '#E84000',
+                pointRadius: 4,
+                fill: true,
+                tension: 0.4
+              }]
+            },
+            options: {
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { ticks: { color: '#555', font: { size: 10 } }, grid: { color: '#1a1a1a' } },
+                y: { ticks: { color: '#555', font: { size: 10 } }, grid: { color: '#1a1a1a' } }
+              }
+            }
+          });
+        }
+
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    carregarProgresso();
+  </script>
+</body>
+</html>

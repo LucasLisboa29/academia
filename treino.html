@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitCode — Treino</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #080808; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Barlow', sans-serif; }
+    .phone { width: 380px; min-height: 780px; background: #0d0d0d; border-radius: 40px; overflow: hidden; display: flex; flex-direction: column; padding: 32px 0 32px; border: 1.5px solid #1e1e1e; }
+    .topbar { display: flex; align-items: center; gap: 14px; padding: 0 24px 20px; }
+    .back-btn { width: 36px; height: 36px; border-radius: 10px; background: #141414; border: 1px solid #222; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; cursor: pointer; text-decoration: none; }
+    .screen-title { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: 0.05em; }
+    .ex-list { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .ex-item { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .ex-item:hover { border-color: #E8400050; background: #1a0f0a; }
+    .ex-item.concluido { border-color: #2a5a2a; background: #0a1a0a; }
+    .ex-name { font-size: 15px; font-weight: 600; color: #ddd; margin-bottom: 6px; }
+    .ex-item.concluido .ex-name { color: #4caf50; }
+    .ex-meta { display: flex; gap: 12px; }
+    .ex-tag { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 0.08em; }
+    .ex-tag strong { color: #888; font-weight: 600; }
+    .ex-arrow { color: #333; font-size: 22px; }
+    .ex-check { color: #4caf50; font-size: 20px; }
+    .bottom-bar { padding: 16px 20px 0; display: flex; gap: 10px; }
+    .btn-progresso { flex: 1; height: 48px; background: #141414; border: 1px solid #222; border-radius: 12px; font-size: 13px; color: #888; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .btn-registrar { flex: 2; height: 48px; background: #E84000; border: none; border-radius: 12px; font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; cursor: pointer; transition: background 0.2s; }
+    .btn-registrar:hover { background: #cc3700; }
+    .sucesso-msg { display: none; margin: 12px 20px 0; padding: 12px 16px; background: #0a1a0a; border: 1px solid #2a5a2a; border-radius: 10px; font-size: 13px; color: #4caf50; text-align: center; }
+
+    /* POPUP */
+    .overlay { display: none; position: fixed; inset: 0; background: #00000099; z-index: 100; align-items: flex-end; justify-content: center; }
+    .overlay.aberto { display: flex; }
+    .popup { width: 380px; background: #131313; border-radius: 24px 24px 0 0; padding: 24px 24px 36px; border: 1px solid #222; border-bottom: none; max-height: 85vh; overflow-y: auto; }
+    .popup-handle { width: 40px; height: 4px; background: #2a2a2a; border-radius: 2px; margin: 0 auto 18px; }
+    .popup-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .popup-ref { font-size: 11px; color: #555; margin-bottom: 18px; }
+    .popup-ref span { color: #E84000; }
+
+    .serie-row { background: #1a1a1a; border: 1px solid #222; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+    .serie-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: #555; margin-bottom: 10px; }
+    .serie-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .input-wrap { display: flex; flex-direction: column; gap: 5px; }
+    .input-wrap label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: #444; }
+    .input-wrap input { height: 40px; background: #111; border: 1px solid #2a2a2a; border-radius: 8px; padding: 0 12px; font-size: 15px; font-family: 'Barlow', sans-serif; color: #e0e0e0; outline: none; transition: border-color 0.2s; }
+    .input-wrap input:focus { border-color: #E8400060; }
+
+    .btn-confirmar { width: 100%; height: 48px; background: #E84000; border: none; border-radius: 12px; font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; color: #fff; cursor: pointer; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px; }
+  </style>
+  <script src="config.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="topbar">
+      <a class="back-btn" href="home.html">←</a>
+      <div class="screen-title" id="titulo-treino">TREINO</div>
+    </div>
+    <div class="ex-list" id="lista-exercicios">
+      <div style="color:#444; font-size:13px; padding:12px 4px;">Carregando exercícios...</div>
+    </div>
+    <div class="sucesso-msg" id="sucesso-msg">✓ Treino registrado com sucesso!</div>
+    <div class="bottom-bar">
+      <a class="btn-progresso" id="btn-progresso" href="progresso.html">📊 Progresso</a>
+      <button class="btn-registrar" onclick="registrarTreino()">Registrar Treino</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="fecharPopup(event)">
+    <div class="popup" id="popup-content">
+      <div class="popup-handle"></div>
+      <div class="popup-title" id="popup-nome">Exercício</div>
+      <div class="popup-ref" id="popup-ref">Referência: <span id="popup-ref-val"></span></div>
+      <div id="popup-series-container"></div>
+      <button class="btn-confirmar" onclick="confirmarExercicio()">Confirmar</button>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const treino = params.get('treino') || 'A';
+    const treinoIdParam = params.get('treino_id');
+    const id = localStorage.getItem('usuario_id');
+    if (!id) window.location.href = 'index.html';
+
+    let exerciciosCarregados = [];
+    let exerciciosRegistrados = {};
+    let exAtual = null;
+    let treinoId = null;
+
+    if (treinoIdParam) {
+        fetch(`${API}/treinos_por_id/${treinoIdParam}`)
+            .then(r => r.json())
+            .then(dados => {
+                if (dados.length > 0 && dados[0].nome_treino) {
+                    document.getElementById('titulo-treino').textContent = dados[0].nome_treino.toUpperCase();
+                }
+            });
+    } else {
+        document.getElementById('titulo-treino').textContent = `TREINO ${treino}`;
+    }
+    document.getElementById('btn-progresso').href = `progresso.html?treino=${treino}`;
+
+    async function carregarExercicios() {
+      try {
+        const url = treinoIdParam 
+            ? `${API}/treinos_por_id/${treinoIdParam}`
+            : `${API}/treinos/${id}/${treino}`;
+        const resp = await fetch(url);
+        const dados = await resp.json();
+        exerciciosCarregados = dados;
+        const lista = document.getElementById('lista-exercicios');
+        lista.innerHTML = '';
+        if (dados.length === 0) {
+          lista.innerHTML = '<div style="color:#444; font-size:13px; padding:12px 4px;">Nenhum exercício neste treino.</div>';
+          return;
+        }
+        dados.forEach(ex => {
+          const item = document.createElement('div');
+          item.className = 'ex-item';
+          item.id = `ex-${ex.nome}`;
+          item.innerHTML = `
+            <div>
+              <div class="ex-name">${ex.nome}</div>
+              <div class="ex-meta">
+                <div class="ex-tag"><strong>${ex.series}</strong> séries</div>
+                <div class="ex-tag"><strong>${ex.carga}</strong> kg</div>
+                <div class="ex-tag"><strong>${ex.repeticoes}</strong> reps</div>
+              </div>
+            </div>
+            <div class="ex-arrow" id="arrow-${ex.nome}">›</div>
+          `;
+          item.onclick = () => abrirPopup(ex);
+          lista.appendChild(item);
+        });
+        treinoId = dados[0]?.treino_id || null;
+      } catch (e) {
+        document.getElementById('lista-exercicios').innerHTML =
+          '<div style="color:#444; font-size:13px; padding:12px 4px;">Erro ao carregar exercícios.</div>';
+      }
+    }
+
+    function abrirPopup(ex) {
+      exAtual = ex;
+      document.getElementById('popup-nome').textContent = ex.nome;
+      document.getElementById('popup-ref-val').textContent =
+        `${ex.series} séries · ${ex.carga}kg · ${ex.repeticoes} reps`;
+
+      const container = document.getElementById('popup-series-container');
+      container.innerHTML = '';
+
+      const jaRegistrado = exerciciosRegistrados[ex.nome];
+
+      for (let i = 1; i <= ex.series; i++) {
+        const cargaVal = jaRegistrado ? jaRegistrado[i-1].carga : ex.carga;
+        const repsVal  = jaRegistrado ? jaRegistrado[i-1].repeticoes : ex.repeticoes;
+
+        const row = document.createElement('div');
+        row.className = 'serie-row';
+        row.innerHTML = `
+          <div class="serie-label">Série ${i}</div>
+          <div class="serie-inputs">
+            <div class="input-wrap">
+              <label>Carga (kg)</label>
+              <input type="number" id="carga-${i}" value="${cargaVal}" min="0" step="0.5" />
+            </div>
+            <div class="input-wrap">
+              <label>Repetições</label>
+              <input type="number" id="reps-${i}" value="${repsVal}" min="1" />
+            </div>
+          </div>
+        `;
+        container.appendChild(row);
+      }
+
+      document.getElementById('overlay').classList.add('aberto');
+    }
+
+    function fecharPopup(e) {
+      if (!e || e.target === document.getElementById('overlay')) {
+        document.getElementById('overlay').classList.remove('aberto');
+      }
+    }
+
+    function confirmarExercicio() {
+      const series = [];
+      for (let i = 1; i <= exAtual.series; i++) {
+        series.push({
+          serie: i,
+          carga: parseFloat(document.getElementById(`carga-${i}`).value) || exAtual.carga,
+          repeticoes: parseInt(document.getElementById(`reps-${i}`).value) || exAtual.repeticoes
+        });
+      }
+
+      exerciciosRegistrados[exAtual.nome] = series;
+
+      // Marca o exercício como concluído na lista
+      const item = document.getElementById(`ex-${exAtual.nome}`);
+      if (item) {
+        item.classList.add('concluido');
+        document.getElementById(`arrow-${exAtual.nome}`).textContent = '✓';
+        document.getElementById(`arrow-${exAtual.nome}`).className = 'ex-check';
+      }
+
+      document.getElementById('overlay').classList.remove('aberto');
+    }
+
+    async function registrarTreino() {
+      if (Object.keys(exerciciosRegistrados).length === 0) {
+        alert('Registre pelo menos um exercício antes de salvar.');
+        return;
+      }
+
+      // Monta lista de exercícios com média das séries para o histórico
+      const exerciciosParaSalvar = Object.entries(exerciciosRegistrados).map(([nome, series]) => {
+        const cargaMedia = series.reduce((s, r) => s + r.carga, 0) / series.length;
+        const repsMedia  = series.reduce((s, r) => s + r.repeticoes, 0) / series.length;
+        return {
+          nome,
+          series: series.length,
+          carga: parseFloat(cargaMedia.toFixed(1)),
+          repeticoes: Math.round(repsMedia)
+        };
+      });
+
+      try {
+        const resp = await fetch(`${API}/historico`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usuario_id: id, treino_id: treinoId, exercicios: exerciciosParaSalvar })
+        });
+        const dados = await resp.json();
+        if (dados.sucesso) {
+          const msg = document.getElementById('sucesso-msg');
+          msg.style.display = 'block';
+          setTimeout(() => { msg.style.display = 'none'; window.location.href = 'home.html'; }, 2000);
+        }
+      } catch (e) { alert('Erro ao registrar treino.'); }
+    }
+
+    carregarExercicios();
+  </script>
+</body>
+</html>
