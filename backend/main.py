@@ -136,7 +136,7 @@ def index():
     frontend_path = os.path.join(os.path.dirname(__file__), '..', 'frontend')
     return send_from_directory(frontend_path, "index.html")
 
-@app.route("/<path:filename>")
+@app.route("/app/<path:filename>")
 def frontend(filename):
     frontend_path = os.path.join(os.path.dirname(__file__), '..', 'frontend')
     return send_from_directory(frontend_path, filename)
