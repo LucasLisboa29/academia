@@ -151,7 +151,7 @@
 
     async function carregarCatalogo() {
       try {
-        const resp = await fetch('${API}/catalogo');
+        const resp = await fetch(`${API}/catalogo`);
         catalogo = await resp.json();
         renderGrupos();
         renderResultados(catalogo);
@@ -287,7 +287,7 @@
       if (exercicios.length === 0) { alert('Adicione pelo menos um exercício.'); return; }
 
       try {
-        const resp = await fetch('${API}/treinos', {
+        const resp = await fetch(`${API}/treinos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ usuario_id: id, nome, exercicios })

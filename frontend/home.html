@@ -262,7 +262,7 @@
       } catch (e) {}
 
       try {
-        const resp = await fetch('${API}/avisos');
+        const resp = await fetch(`${API}/avisos`);
         const dados = await resp.json();
         if (dados.length > 0) {
           document.getElementById('aviso-texto').textContent = dados[0].mensagem;

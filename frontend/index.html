@@ -180,7 +180,7 @@
       erro.style.display = 'none';
 
       try {
-        const resposta = await fetch('${API}/login', {
+        const resposta = await fetch(`${API}/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ cpf, senha })

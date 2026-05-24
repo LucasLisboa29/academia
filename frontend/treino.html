@@ -224,7 +224,7 @@
       });
 
       try {
-        const resp = await fetch('${API}/historico', {
+        const resp = await fetch(`${API}/historico`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ usuario_id: id, treino_id: treinoId, exercicios: exerciciosParaSalvar })
