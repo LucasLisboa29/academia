@@ -8,6 +8,9 @@ app = Flask(__name__)
 CORS(app)
 
 def conectar():
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        return psycopg2.connect(database_url, sslmode='require')
     return psycopg2.connect(
         host="localhost",
         database="academia-jair",
