@@ -1,1 +1,1 @@
-academia-production-e8d8.up.railway.app
+const API = "https://academia-production-e8d8.up.railway.app";
