@@ -133,11 +133,13 @@ def criar_treino():
 # ── SERVIR FRONTEND ────────────────────────────────
 @app.route("/")
 def index():
-    return send_from_directory("../frontend", "index.html")
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', 'frontend')
+    return send_from_directory(frontend_path, "index.html")
 
 @app.route("/<path:filename>")
 def frontend(filename):
-    return send_from_directory("../frontend", filename)
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', 'frontend')
+    return send_from_directory(frontend_path, filename)
 
 # ── REGISTRAR EXECUÇÃO DO TREINO ───────────────────
 @app.route("/historico", methods=["POST"])
