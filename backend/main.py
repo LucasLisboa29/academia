@@ -351,5 +351,40 @@ def editar_treino(treino_id):
     conn.close()
     return jsonify({"sucesso": True})
 
+@app.route("/exercicio", methods=["POST"])
+def adicionar_exercicio():
+    dados = request.json
+    treino_id = dados["treino_id"]
+    nome = dados["nome"]
+    series = dados["series"]
+    carga = dados["carga"]
+    repeticoes = dados["repeticoes"]
+
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO exercicios (nome, series, carga, repeticoes, treino_id) VALUES (%s, %s, %s, %s, %s)",
+        (nome, series, carga, repeticoes, treino_id)
+    )
+    conn.commit()
+    conn.close()
+    return jsonify({"sucesso": True})
+
+# ── REMOVER EXERCICIO DO TREINO ────────────────────
+@app.route("/exercicio/<int:treino_id>", methods=["DELETE"])
+def remover_exercicio(treino_id):
+    dados = request.json
+    nome = dados["nome"]
+
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute(
+        "DELETE FROM exercicios WHERE treino_id = %s AND nome = %s",
+        (treino_id, nome)
+    )
+    conn.commit()
+    conn.close()
+    return jsonify({"sucesso": True})
+
 if __name__ == "__main__":
     app.run(debug=True)
