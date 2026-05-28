@@ -191,7 +191,13 @@
         if (dados.sucesso) {
           localStorage.setItem('usuario_id', dados.id);
           localStorage.setItem('usuario_nome', dados.nome);
-          window.location.href = 'home.html';
+          localStorage.setItem('is_admin', dados.is_admin);
+
+          if (dados.is_admin) {
+            window.location.href = 'admin.html';
+          } else {
+            window.location.href = 'home.html';
+          }
         } else {
           erro.style.display = 'block';
         }

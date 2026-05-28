@@ -28,14 +28,19 @@ def login():
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT id, nome FROM usuarios WHERE cpf = %s AND senha = %s",
+        "SELECT id, nome, is_admin FROM usuarios WHERE cpf = %s AND senha = %s",
         (cpf, senha)
     )
     usuario = cursor.fetchone()
     conn.close()
 
     if usuario:
-        return jsonify({"sucesso": True, "id": usuario[0], "nome": usuario[1]})
+        return jsonify({
+            "sucesso": True,
+            "id": usuario[0],
+            "nome": usuario[1],
+            "is_admin": usuario[2]
+        })
     else:
         return jsonify({"sucesso": False, "mensagem": "CPF ou senha incorretos"})
 
@@ -382,6 +387,124 @@ def remover_exercicio(treino_id):
         "DELETE FROM exercicios WHERE treino_id = %s AND nome = %s",
         (treino_id, nome)
     )
+    conn.commit()
+    conn.close()
+    return jsonify({"sucesso": True})
+
+# ── ADMIN DASHBOARD ────────────────────────────────
+@app.route("/admin/dashboard", methods=["GET"])
+def admin_dashboard():
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM usuarios WHERE is_admin = FALSE")
+    total_alunos = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(DISTINCT usuario_id) FROM historico_treino WHERE data_execucao::date = CURRENT_DATE")
+    treinaram_hoje = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM historico_treino WHERE data_execucao >= NOW() - INTERVAL '7 days'")
+    essa_semana = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(DISTINCT u.id) FROM usuarios u
+        WHERE u.is_admin = FALSE
+        AND (SELECT MAX(ht.data_execucao) FROM historico_treino ht WHERE ht.usuario_id = u.id) < NOW() - INTERVAL '7 days'
+        OR NOT EXISTS (SELECT 1 FROM historico_treino ht WHERE ht.usuario_id = u.id)
+    """)
+    em_risco = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT EXTRACT(HOUR FROM data_execucao)::int as hora, COUNT(*) as total
+        FROM historico_treino
+        GROUP BY hora ORDER BY total DESC LIMIT 5
+    """)
+    picos = [{"hora": r[0], "total": r[1]} for r in cursor.fetchall()]
+    picos.sort(key=lambda x: x['hora'])
+
+    conn.close()
+    return jsonify({"total_alunos": total_alunos, "treinaram_hoje": treinaram_hoje, "essa_semana": essa_semana, "em_risco": em_risco, "picos": picos})
+
+# ── ADMIN ALUNOS ───────────────────────────────────
+@app.route("/admin/alunos", methods=["GET"])
+def admin_alunos():
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT u.id, u.nome,
+            MAX(ht.data_execucao) as ultimo_treino,
+            COUNT(ht.id) as total_treinos
+        FROM usuarios u
+        LEFT JOIN historico_treino ht ON ht.usuario_id = u.id
+        WHERE u.is_admin = FALSE
+        GROUP BY u.id, u.nome
+        ORDER BY ultimo_treino DESC NULLS LAST
+    """)
+    alunos = cursor.fetchall()
+
+    resultado = []
+    for a in alunos:
+        uid, nome, ultimo, total = a
+        ultimo_str = ultimo.strftime("%d/%m/%Y") if ultimo else None
+        dias_ausente = ((__import__('datetime').datetime.now() - ultimo).days if ultimo else 999)
+
+        cursor.execute("""
+            SELECT EXTRACT(HOUR FROM data_execucao)::int as hora, COUNT(*) as freq
+            FROM historico_treino WHERE usuario_id = %s
+            GROUP BY hora ORDER BY freq DESC LIMIT 1
+        """, (uid,))
+        horario_row = cursor.fetchone()
+        horario_sugerido = horario_row[0] if horario_row else None
+
+        if dias_ausente >= 7:
+            status = 'risco'
+        elif total >= 10:
+            status = 'convite'
+        else:
+            status = 'ativo'
+
+        resultado.append({
+            "id": uid, "nome": nome, "ultimo_treino": ultimo_str,
+            "total_treinos": total, "status": status,
+            "horario_sugerido": horario_sugerido
+        })
+
+    conn.close()
+    return jsonify(resultado)
+
+# ── ADMIN RANKING ──────────────────────────────────
+@app.route("/admin/ranking", methods=["GET"])
+def admin_ranking():
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT u.nome, COUNT(ht.id) as total
+        FROM usuarios u
+        JOIN historico_treino ht ON ht.usuario_id = u.id
+        WHERE u.is_admin = FALSE
+        GROUP BY u.nome ORDER BY total DESC LIMIT 10
+    """)
+    ranking = [{"nome": r[0], "total": r[1]} for r in cursor.fetchall()]
+    conn.close()
+    return jsonify(ranking)
+
+# ── ADMIN AVISOS ───────────────────────────────────
+@app.route("/avisos", methods=["POST"])
+def criar_aviso():
+    dados = request.json
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO avisos (mensagem) VALUES (%s)", (dados["mensagem"],))
+    conn.commit()
+    conn.close()
+    return jsonify({"sucesso": True})
+
+@app.route("/avisos/<int:aviso_id>", methods=["DELETE"])
+def deletar_aviso(aviso_id):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM avisos WHERE id = %s", (aviso_id,))
     conn.commit()
     conn.close()
     return jsonify({"sucesso": True})

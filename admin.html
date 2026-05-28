@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitCode — Painel Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="config.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #080808; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Barlow', sans-serif; }
+    .phone { width: 380px; min-height: 780px; background: #0d0d0d; border-radius: 40px; overflow: hidden; display: flex; flex-direction: column; border: 1.5px solid #1e1e1e; }
+
+    /* HEADER */
+    .admin-header { padding: 28px 24px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .admin-logo { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: #fff; }
+    .admin-logo span { color: #E84000; }
+    .btn-sair-admin { font-size: 12px; color: #555; text-decoration: none; padding: 6px 12px; border: 1px solid #222; border-radius: 8px; transition: color 0.2s; }
+    .btn-sair-admin:hover { color: #E84000; }
+
+    /* TABS */
+    .tabs { display: flex; padding: 0 20px; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid #1a1a1a; }
+    .tab { padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #444; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+    .tab.ativo { color: #E84000; border-bottom-color: #E84000; }
+
+    /* CONTENT */
+    .tab-content { display: none; padding: 0 20px; flex: 1; overflow-y: auto; padding-bottom: 20px; }
+    .tab-content.ativo { display: block; }
+
+    /* CARDS DASHBOARD */
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .dash-card { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 16px; }
+    .dash-card.full { grid-column: 1 / -1; }
+    .dash-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #444; margin-bottom: 8px; }
+    .dash-val { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 700; color: #E84000; line-height: 1; }
+    .dash-unit { font-size: 11px; color: #555; margin-top: 4px; }
+    .pico-lista { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .pico-item { display: flex; align-items: center; gap: 10px; }
+    .pico-hora { font-size: 12px; color: #888; width: 50px; }
+    .pico-bar-wrap { flex: 1; height: 8px; background: #1a1a1a; border-radius: 4px; overflow: hidden; }
+    .pico-bar { height: 100%; background: #E84000; border-radius: 4px; }
+    .pico-num { font-size: 11px; color: #555; width: 20px; text-align: right; }
+
+    /* ALUNOS */
+    .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: #444; margin-bottom: 10px; margin-top: 16px; }
+    .aluno-item { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; }
+    .aluno-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .aluno-nome { font-size: 14px; font-weight: 600; color: #ddd; }
+    .badge { padding: 3px 8px; border-radius: 20px; font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+    .badge-risco { background: #1a0808; color: #E84000; border: 1px solid #E8400040; }
+    .badge-ativo { background: #0a1a0a; color: #4caf50; border: 1px solid #4caf5040; }
+    .badge-convite { background: #1a150a; color: #F5A623; border: 1px solid #F5A62340; }
+    .aluno-info { font-size: 11px; color: #555; }
+    .aluno-convite { margin-top: 8px; padding: 8px 12px; background: #1a150a; border: 1px solid #F5A62330; border-radius: 8px; font-size: 11px; color: #F5A623; }
+
+    /* CONTEUDO */
+    .aviso-form { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+    .aviso-form textarea { width: 100%; height: 80px; background: #1a1a1a; border: 1px solid #242424; border-radius: 10px; padding: 12px; font-size: 13px; color: #e0e0e0; font-family: 'Barlow', sans-serif; outline: none; resize: none; margin-bottom: 10px; }
+    .aviso-form textarea::placeholder { color: #444; }
+    .btn-postar { width: 100%; height: 44px; background: #E84000; border: none; border-radius: 10px; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: #fff; cursor: pointer; text-transform: uppercase; }
+    .aviso-existente { background: #111; border: 1px solid #1e1e1e; border-left: 3px solid #E84000; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; }
+    .aviso-texto { font-size: 13px; color: #888; flex: 1; }
+    .btn-del-aviso { background: none; border: none; color: #333; font-size: 16px; cursor: pointer; padding: 0 0 0 10px; transition: color 0.2s; }
+    .btn-del-aviso:hover { color: #E84000; }
+
+    /* RANKING */
+    .rank-item { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 14px; }
+    .rank-pos { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: #333; width: 24px; }
+    .rank-pos.top { color: #F5A623; }
+    .rank-nome { flex: 1; font-size: 14px; font-weight: 600; color: #ddd; }
+    .rank-count { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #E84000; }
+    .rank-unit { font-size: 10px; color: #555; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="admin-header">
+      <div class="admin-logo">FIT<span>CODE</span> <span style="color:#555; font-size:14px;">ADMIN</span></div>
+      <a class="btn-sair-admin" href="index.html" onclick="localStorage.clear()">Sair</a>
+    </div>
+
+    <div class="tabs">
+      <div class="tab ativo" onclick="trocarTab('dashboard')">Dashboard</div>
+      <div class="tab" onclick="trocarTab('alunos')">Alunos</div>
+      <div class="tab" onclick="trocarTab('conteudo')">Conteúdo</div>
+      <div class="tab" onclick="trocarTab('ranking')">Ranking</div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="tab-content ativo" id="tab-dashboard">
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dash-label">Total de alunos</div>
+          <div class="dash-val" id="total-alunos">—</div>
+          <div class="dash-unit">cadastrados</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-label">Treinaram hoje</div>
+          <div class="dash-val" id="treinaram-hoje">—</div>
+          <div class="dash-unit">alunos</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-label">Essa semana</div>
+          <div class="dash-val" id="essa-semana-admin">—</div>
+          <div class="dash-unit">sessões</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-label">Em risco</div>
+          <div class="dash-val" id="em-risco-count">—</div>
+          <div class="dash-unit">sem treinar</div>
+        </div>
+        <div class="dash-card full">
+          <div class="dash-label">Horários de pico</div>
+          <div class="pico-lista" id="pico-lista">
+            <div style="color:#444; font-size:12px;">Carregando...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALUNOS -->
+    <div class="tab-content" id="tab-alunos">
+      <div class="section-label">🎁 Convites sugeridos</div>
+      <div id="lista-convites"></div>
+      <div class="section-label">⚠️ Em risco de abandono</div>
+      <div id="lista-risco"></div>
+      <div class="section-label">✅ Alunos ativos</div>
+      <div id="lista-ativos"></div>
+    </div>
+
+    <!-- CONTEUDO -->
+    <div class="tab-content" id="tab-conteudo">
+      <div class="section-label">Publicar aviso</div>
+      <div class="aviso-form">
+        <textarea id="novo-aviso" placeholder="Ex: Hoje tem aula de Zumba às 19h!"></textarea>
+        <button class="btn-postar" onclick="postarAviso()">Publicar</button>
+      </div>
+      <div class="section-label">Avisos publicados</div>
+      <div id="lista-avisos-admin"></div>
+    </div>
+
+    <!-- RANKING -->
+    <div class="tab-content" id="tab-ranking">
+      <div class="section-label">🏆 Mais frequentes</div>
+      <div id="lista-ranking"></div>
+    </div>
+  </div>
+
+  <script>
+    const id = localStorage.getItem('usuario_id');
+    const isAdmin = localStorage.getItem('is_admin');
+    if (!id || isAdmin !== 'true') window.location.href = 'index.html';
+
+    function trocarTab(nome) {
+      document.querySelectorAll('.tab').forEach((t, i) => {
+        const nomes = ['dashboard', 'alunos', 'conteudo', 'ranking'];
+        t.classList.toggle('ativo', nomes[i] === nome);
+      });
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('ativo'));
+      document.getElementById(`tab-${nome}`).classList.add('ativo');
+    }
+
+    async function carregarDashboard() {
+      try {
+        const resp = await fetch(`${API}/admin/dashboard`);
+        const d = await resp.json();
+
+        document.getElementById('total-alunos').textContent = d.total_alunos;
+        document.getElementById('treinaram-hoje').textContent = d.treinaram_hoje;
+        document.getElementById('essa-semana-admin').textContent = d.essa_semana;
+        document.getElementById('em-risco-count').textContent = d.em_risco;
+
+        const picoLista = document.getElementById('pico-lista');
+        picoLista.innerHTML = '';
+        if (d.picos.length === 0) {
+          picoLista.innerHTML = '<div style="color:#444; font-size:12px;">Sem dados ainda.</div>';
+        } else {
+          const max = Math.max(...d.picos.map(p => p.total));
+          d.picos.forEach(p => {
+            const pct = max > 0 ? (p.total / max) * 100 : 0;
+            const item = document.createElement('div');
+            item.className = 'pico-item';
+            item.innerHTML = `
+              <div class="pico-hora">${p.hora}h</div>
+              <div class="pico-bar-wrap"><div class="pico-bar" style="width:${pct}%"></div></div>
+              <div class="pico-num">${p.total}</div>
+            `;
+            picoLista.appendChild(item);
+          });
+        }
+      } catch (e) {}
+    }
+
+    async function carregarAlunos() {
+      try {
+        const resp = await fetch(`${API}/admin/alunos`);
+        const alunos = await resp.json();
+
+        const convites = alunos.filter(a => a.status === 'convite');
+        const risco = alunos.filter(a => a.status === 'risco');
+        const ativos = alunos.filter(a => a.status === 'ativo');
+
+        renderAlunos('lista-convites', convites);
+        renderAlunos('lista-risco', risco);
+        renderAlunos('lista-ativos', ativos);
+      } catch (e) {}
+    }
+
+    function renderAlunos(containerId, alunos) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      if (alunos.length === 0) {
+        container.innerHTML = '<div style="color:#333; font-size:12px; margin-bottom:8px;">Nenhum aluno aqui.</div>';
+        return;
+      }
+      alunos.forEach(a => {
+        const item = document.createElement('div');
+        item.className = 'aluno-item';
+
+        let badge = '';
+        if (a.status === 'risco') badge = '<span class="badge badge-risco">⚠️ Em risco</span>';
+        else if (a.status === 'convite') badge = '<span class="badge badge-convite">🎁 Convite</span>';
+        else badge = '<span class="badge badge-ativo">✅ Ativo</span>';
+
+        let conviteHtml = '';
+        if (a.status === 'convite' && a.horario_sugerido) {
+          conviteHtml = `<div class="aluno-convite">🎁 Sugestão: convidar amigo para treinar às <strong>${a.horario_sugerido}h</strong> — horário habitual do aluno com menor movimento</div>`;
+        }
+
+        if (a.status === 'risco' && a.horario_sugerido) {
+          conviteHtml = `<div class="aluno-convite" style="background:#1a0808; border-color:#E8400030; color:#E84000;">💡 Reativar: oferecer convite para às <strong>${a.horario_sugerido}h</strong> como incentivo de retorno</div>`;
+        }
+
+        item.innerHTML = `
+          <div class="aluno-top">
+            <div class="aluno-nome">${a.nome}</div>
+            ${badge}
+          </div>
+          <div class="aluno-info">Último treino: ${a.ultimo_treino || 'nunca'} · ${a.total_treinos} sessões</div>
+          ${conviteHtml}
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    async function carregarAvisos() {
+      try {
+        const resp = await fetch(`${API}/avisos`);
+        const avisos = await resp.json();
+        const lista = document.getElementById('lista-avisos-admin');
+        lista.innerHTML = '';
+        if (avisos.length === 0) {
+          lista.innerHTML = '<div style="color:#333; font-size:12px;">Nenhum aviso publicado.</div>';
+          return;
+        }
+        avisos.forEach(a => {
+          const item = document.createElement('div');
+          item.className = 'aviso-existente';
+          item.innerHTML = `
+            <div class="aviso-texto">${a.mensagem}</div>
+            <button class="btn-del-aviso" onclick="deletarAviso(${a.id})">✕</button>
+          `;
+          lista.appendChild(item);
+        });
+      } catch (e) {}
+    }
+
+    async function postarAviso() {
+      const texto = document.getElementById('novo-aviso').value.trim();
+      if (!texto) { alert('Digite o aviso antes de publicar.'); return; }
+      try {
+        const resp = await fetch(`${API}/avisos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mensagem: texto })
+        });
+        const dados = await resp.json();
+        if (dados.sucesso) {
+          document.getElementById('novo-aviso').value = '';
+          carregarAvisos();
+        }
+      } catch (e) { alert('Erro ao publicar aviso.'); }
+    }
+
+    async function deletarAviso(avisoId) {
+      if (!confirm('Apagar este aviso?')) return;
+      try {
+        await fetch(`${API}/avisos/${avisoId}`, { method: 'DELETE' });
+        carregarAvisos();
+      } catch (e) {}
+    }
+
+    async function carregarRanking() {
+      try {
+        const resp = await fetch(`${API}/admin/ranking`);
+        const ranking = await resp.json();
+        const lista = document.getElementById('lista-ranking');
+        lista.innerHTML = '';
+        ranking.forEach((a, i) => {
+          const item = document.createElement('div');
+          item.className = 'rank-item';
+          item.innerHTML = `
+            <div class="rank-pos ${i < 3 ? 'top' : ''}">${i + 1}</div>
+            <div class="rank-nome">${a.nome}</div>
+            <div>
+              <div class="rank-count">${a.total}</div>
+              <div class="rank-unit">treinos</div>
+            </div>
+          `;
+          lista.appendChild(item);
+        });
+      } catch (e) {}
+    }
+
+    carregarDashboard();
+    carregarAlunos();
+    carregarAvisos();
+    carregarRanking();
+  </script>
+</body>
+</html>
