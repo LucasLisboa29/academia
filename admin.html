@@ -460,6 +460,8 @@
 
     async function carregarTreinoAluno() {
       if (!alunoSelecionadoId) return;
+      treinoIdAtual = null;
+      exercicios = [];
       const lista = document.getElementById('lista-ex-admin');
       lista.innerHTML = '<div style="font-size:13px; color:#333; padding: 4px 0;">Carregando...</div>';
       try {
