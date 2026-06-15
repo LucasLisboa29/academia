@@ -55,7 +55,10 @@
     .overlay2.aberto { display: flex; }
     .popup2 { width: 380px; background: #131313; border-radius: 24px 24px 0 0; padding: 24px 24px 36px; border: 1px solid #222; border-bottom: none; max-height: 85vh; display: flex; flex-direction: column; }
     .popup2-handle { width: 40px; height: 4px; background: #2a2a2a; border-radius: 2px; margin: 0 auto 18px; flex-shrink: 0; }
-    .popup2-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 14px; flex-shrink: 0; }
+    .popup2-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-shrink: 0; }
+    .popup2-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #fff; }
+    .popup-fechar { width: 32px; height: 32px; border-radius: 8px; background: #1a1a1a; border: 1px solid #2a2a2a; color: #888; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.2s, border-color 0.2s; }
+    .popup-fechar:hover { color: #E84000; border-color: #E8400050; }
     .busca-input { width: 100%; height: 44px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 0 14px; font-size: 14px; color: #e0e0e0; font-family: 'Barlow', sans-serif; outline: none; margin-bottom: 14px; flex-shrink: 0; }
     .busca-input::placeholder { color: #FFFFFF; }
     .grupos-scroll { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 14px; padding-bottom: 4px; flex-shrink: 0; }
@@ -74,6 +77,9 @@
     .overlay3.aberto { display: flex; }
     .popup3 { width: 380px; background: #131313; border-radius: 24px 24px 0 0; padding: 24px 24px 36px; border: 1px solid #222; border-bottom: none; }
     .popup3-handle { width: 40px; height: 4px; background: #2a2a2a; border-radius: 2px; margin: 0 auto 18px; }
+    .popup3-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+    .popup3-voltar { width: 32px; height: 32px; border-radius: 8px; background: #1a1a1a; border: 1px solid #2a2a2a; color: #888; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: color 0.2s, border-color 0.2s; }
+    .popup3-voltar:hover { color: #E84000; border-color: #E8400050; }
     .popup3-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
     .popup3-grupo { font-size: 10px; color: #E84000; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
     .popup-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
@@ -111,7 +117,10 @@
   <div class="overlay2" id="overlay-busca" onclick="fecharBusca(event)">
     <div class="popup2">
       <div class="popup2-handle"></div>
-      <div class="popup2-title">Adicionar Exercício</div>
+      <div class="popup2-head">
+        <div class="popup2-title">Adicionar Exercício</div>
+        <button class="popup-fechar" onclick="fecharBusca()">✕</button>
+      </div>
       <input class="busca-input" type="text" id="campo-busca" placeholder="Digite para buscar..." oninput="buscar()" />
       <div class="grupos-scroll" id="grupos-scroll"></div>
       <div class="resultados" id="resultados"></div>
@@ -122,8 +131,13 @@
   <div class="overlay3" id="overlay-config">
     <div class="popup3">
       <div class="popup3-handle"></div>
-      <div class="popup3-title" id="config-nome">Exercício</div>
-      <div class="popup3-grupo" id="config-grupo"></div>
+      <div class="popup3-head">
+        <button class="popup3-voltar" onclick="voltarParaBusca()">←</button>
+        <div>
+          <div class="popup3-title" id="config-nome">Exercício</div>
+          <div class="popup3-grupo" id="config-grupo"></div>
+        </div>
+      </div>
       <div class="popup-grid">
         <div class="input-wrap"><label>Séries</label><input type="number" id="config-series" value="3" min="1" /></div>
         <div class="input-wrap"><label>Carga (kg)</label><input type="number" id="config-carga" value="0" min="0" step="0.5" /></div>
@@ -291,6 +305,11 @@
       if (!e || e.target === document.getElementById('overlay-busca')) {
         document.getElementById('overlay-busca').classList.remove('aberto');
       }
+    }
+
+    function voltarParaBusca() {
+      document.getElementById('overlay-config').classList.remove('aberto');
+      document.getElementById('overlay-busca').classList.add('aberto');
     }
 
     function abrirConfigNovo(ex) {
