@@ -9,7 +9,7 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #080808; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Barlow', sans-serif; }
-    .phone { width: 380px; min-height: 780px; background: #0d0d0d; border-radius: 40px; overflow: hidden; display: flex; flex-direction: column; border: 1.5px solid #1e1e1e; }
+    .phone { width: 380px; min-height: 780px; background: #333333; border-radius: 40px; overflow: hidden; display: flex; flex-direction: column; border: 1.5px solid #1e1e1e; }
 
     /* HEADER */
     .admin-header { padding: 28px 24px 16px; display: flex; align-items: center; justify-content: space-between; }
@@ -20,7 +20,7 @@
 
     /* TABS */
     .tabs { display: flex; padding: 0 20px; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid #1a1a1a; }
-    .tab { padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #444; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+    .tab { padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #FFFFFF; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
     .tab.ativo { color: #E84000; border-bottom-color: #E84000; }
 
     /* CONTENT */
@@ -31,7 +31,7 @@
     .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
     .dash-card { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 16px; }
     .dash-card.full { grid-column: 1 / -1; }
-    .dash-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #444; margin-bottom: 8px; }
+    .dash-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #FFFFFF; margin-bottom: 8px; }
     .dash-val { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 700; color: #E84000; line-height: 1; }
     .dash-unit { font-size: 11px; color: #555; margin-top: 4px; }
     .pico-lista { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
@@ -42,10 +42,10 @@
     .pico-num { font-size: 11px; color: #555; width: 20px; text-align: right; }
 
     /* ALUNOS */
-    .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: #444; margin-bottom: 10px; margin-top: 16px; }
+    .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: #FFFFFF; margin-bottom: 10px; margin-top: 16px; }
     .aluno-item { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; }
     .aluno-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .aluno-nome { font-size: 14px; font-weight: 600; color: #ddd; }
+    .aluno-nome { font-size: 14px; font-weight: 600; color: #FFFFFF; }
     .badge { padding: 3px 8px; border-radius: 20px; font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
     .badge-risco { background: #1a0808; color: #E84000; border: 1px solid #E8400040; }
     .badge-ativo { background: #0a1a0a; color: #4caf50; border: 1px solid #4caf5040; }
@@ -56,7 +56,7 @@
     /* CONTEUDO */
     .aviso-form { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
     .aviso-form textarea { width: 100%; height: 80px; background: #1a1a1a; border: 1px solid #242424; border-radius: 10px; padding: 12px; font-size: 13px; color: #e0e0e0; font-family: 'Barlow', sans-serif; outline: none; resize: none; margin-bottom: 10px; }
-    .aviso-form textarea::placeholder { color: #444; }
+    .aviso-form textarea::placeholder { color: #FFFFFF; }
     .btn-postar { width: 100%; height: 44px; background: #E84000; border: none; border-radius: 10px; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: #fff; cursor: pointer; text-transform: uppercase; }
     .aviso-existente { background: #111; border: 1px solid #1e1e1e; border-left: 3px solid #E84000; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; }
     .aviso-texto { font-size: 13px; color: #888; flex: 1; }
@@ -67,7 +67,7 @@
     .rank-item { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 14px; }
     .rank-pos { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: #333; width: 24px; }
     .rank-pos.top { color: #F5A623; }
-    .rank-nome { flex: 1; font-size: 14px; font-weight: 600; color: #ddd; }
+    .rank-nome { flex: 1; font-size: 14px; font-weight: 600; color: #FFFFFF; }
     .rank-count { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #E84000; }
     .rank-unit { font-size: 10px; color: #555; }
   </style>
@@ -112,7 +112,7 @@
         <div class="dash-card full">
           <div class="dash-label">Horários de pico</div>
           <div class="pico-lista" id="pico-lista">
-            <div style="color:#444; font-size:12px;">Carregando...</div>
+            <div style="color:#FFFFFF; font-size:12px;">Carregando...</div>
           </div>
         </div>
       </div>
@@ -173,7 +173,7 @@
         const picoLista = document.getElementById('pico-lista');
         picoLista.innerHTML = '';
         if (d.picos.length === 0) {
-          picoLista.innerHTML = '<div style="color:#444; font-size:12px;">Sem dados ainda.</div>';
+          picoLista.innerHTML = '<div style="color:#FFFFFF; font-size:12px;">Sem dados ainda.</div>';
         } else {
           const max = Math.max(...d.picos.map(p => p.total));
           d.picos.forEach(p => {
