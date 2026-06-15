@@ -63,13 +63,67 @@
     .btn-del-aviso { background: none; border: none; color: #333; font-size: 16px; cursor: pointer; padding: 0 0 0 10px; transition: color 0.2s; }
     .btn-del-aviso:hover { color: #E84000; }
 
-    /* RANKING */
-    .rank-item { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 14px; }
-    .rank-pos { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: #333; width: 24px; }
-    .rank-pos.top { color: #F5A623; }
-    .rank-nome { flex: 1; font-size: 14px; font-weight: 600; color: #FFFFFF; }
-    .rank-count { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #E84000; }
-    .rank-unit { font-size: 10px; color: #555; }
+    /* TREINOS DO ALUNO */
+    .admin-select { width: 100%; height: 48px; background: #141414; border: 1px solid #242424; border-radius: 12px; padding: 0 14px; font-size: 14px; color: #e0e0e0; font-family: 'Barlow', sans-serif; outline: none; margin-bottom: 8px; transition: border-color 0.2s; }
+    .admin-select:focus { border-color: #E8400060; }
+    .letra-tabs { display: flex; gap: 8px; margin-bottom: 8px; }
+    .letra-btn { flex: 1; height: 44px; background: #141414; border: 1px solid #242424; border-radius: 12px; font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #888; cursor: pointer; transition: all 0.2s; }
+    .letra-btn.ativo { background: #E8400020; border-color: #E84000; color: #E84000; }
+
+    .exercicios-adicionados { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .ex-adicionado { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .ex-ad-nome { font-size: 14px; font-weight: 600; color: #FFFFFF; }
+    .ex-ad-meta { font-size: 11px; color: #555; margin-top: 3px; }
+    .ex-ad-grupo { font-size: 10px; color: #E84000; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .btn-remover { background: none; border: none; color: #333; font-size: 18px; cursor: pointer; transition: color 0.2s; padding: 4px; }
+    .btn-remover:hover { color: #E84000; }
+    .btn-add-ex { width: 100%; height: 48px; background: transparent; border: 1px dashed #2a2a2a; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: #555; cursor: pointer; margin-bottom: 16px; transition: border-color 0.2s, color 0.2s; }
+    .btn-add-ex:hover { border-color: #E8400050; color: #E84000; }
+    .btn-add-ex .plus { font-size: 20px; color: #E84000; }
+    .btn-salvar-treino { width: 100%; height: 52px; background: #E84000; border: none; border-radius: 14px; font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; cursor: pointer; transition: background 0.2s; }
+    .btn-salvar-treino:hover { background: #cc3700; }
+
+    /* OVERLAY BUSCA */
+    .overlay { display: none; position: fixed; inset: 0; background: #00000099; z-index: 100; align-items: flex-end; justify-content: center; }
+    .overlay.aberto { display: flex; }
+    .popup { width: 380px; background: #131313; border-radius: 24px 24px 0 0; padding: 24px 24px 36px; border: 1px solid #222; border-bottom: none; max-height: 85vh; display: flex; flex-direction: column; }
+    .popup-handle { width: 40px; height: 4px; background: #2a2a2a; border-radius: 2px; margin: 0 auto 18px; flex-shrink: 0; }
+    .popup-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-shrink: 0; }
+    .popup-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #FFFFFF; }
+    .popup-fechar { width: 32px; height: 32px; border-radius: 8px; background: #1a1a1a; border: 1px solid #2a2a2a; color: #888; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.2s, border-color 0.2s; }
+    .popup-fechar:hover { color: #E84000; border-color: #E8400050; }
+    .busca-input { width: 100%; height: 44px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 0 14px; font-size: 14px; color: #e0e0e0; font-family: 'Barlow', sans-serif; outline: none; margin-bottom: 14px; flex-shrink: 0; transition: border-color 0.2s; }
+    .busca-input:focus { border-color: #E8400060; }
+    .busca-input::placeholder { color: #555; }
+    .grupos-scroll { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 14px; padding-bottom: 4px; flex-shrink: 0; }
+    .grupos-scroll::-webkit-scrollbar { height: 3px; }
+    .grupos-scroll::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .grupo-btn { padding: 6px 14px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px; font-size: 11px; color: #666; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .grupo-btn.ativo { background: #E8400020; border-color: #E84000; color: #E84000; }
+    .resultados { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .resultado-item { background: #1a1a1a; border: 1px solid #222; border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: border-color 0.2s, background 0.2s; display: flex; align-items: center; justify-content: space-between; }
+    .resultado-item:hover { border-color: #E8400050; background: #1a0f0a; }
+    .resultado-nome { font-size: 14px; font-weight: 600; color: #FFFFFF; }
+    .resultado-grupo { font-size: 10px; color: #555; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .resultado-plus { font-size: 20px; color: #E84000; }
+    .vazio-busca { font-size: 13px; color: #555; text-align: center; padding: 20px 0; }
+
+    /* OVERLAY CONFIG */
+    .overlay2 { display: none; position: fixed; inset: 0; background: #00000099; z-index: 200; align-items: flex-end; justify-content: center; }
+    .overlay2.aberto { display: flex; }
+    .popup2 { width: 380px; background: #131313; border-radius: 24px 24px 0 0; padding: 24px 24px 36px; border: 1px solid #222; border-bottom: none; }
+    .popup2-handle { width: 40px; height: 4px; background: #2a2a2a; border-radius: 2px; margin: 0 auto 18px; }
+    .popup2-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+    .popup2-voltar { width: 32px; height: 32px; border-radius: 8px; background: #1a1a1a; border: 1px solid #2a2a2a; color: #888; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: color 0.2s, border-color 0.2s; }
+    .popup2-voltar:hover { color: #E84000; border-color: #E8400050; }
+    .popup2-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .popup2-grupo { font-size: 10px; color: #E84000; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    .popup-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
+    .input-wrap { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .input-wrap label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: #FFFFFF; }
+    .input-wrap input { width: 100%; min-width: 0; height: 44px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 0 10px; font-size: 15px; font-family: 'Barlow', sans-serif; color: #e0e0e0; outline: none; transition: border-color 0.2s; }
+    .input-wrap input:focus { border-color: #E8400060; }
+    .btn-confirmar { width: 100%; height: 46px; background: #E84000; border: none; border-radius: 10px; font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; color: #fff; cursor: pointer; text-transform: uppercase; letter-spacing: 0.08em; }
   </style>
 </head>
 <body>
@@ -83,7 +137,7 @@
       <div class="tab ativo" onclick="trocarTab('dashboard')">Dashboard</div>
       <div class="tab" onclick="trocarTab('alunos')">Alunos</div>
       <div class="tab" onclick="trocarTab('conteudo')">Conteúdo</div>
-      <div class="tab" onclick="trocarTab('ranking')">Ranking</div>
+      <div class="tab" onclick="trocarTab('treinos')">Treinos</div>
     </div>
 
     <!-- DASHBOARD -->
@@ -139,10 +193,72 @@
       <div id="lista-avisos-admin"></div>
     </div>
 
-    <!-- RANKING -->
-    <div class="tab-content" id="tab-ranking">
-      <div class="section-label">🏆 Mais frequentes</div>
-      <div id="lista-ranking"></div>
+    <!-- TREINOS -->
+    <div class="tab-content" id="tab-treinos">
+      <div class="section-label">Selecione o aluno</div>
+      <select class="admin-select" id="select-aluno" onchange="onAlunoChange()">
+        <option value="">— escolha um aluno —</option>
+      </select>
+
+      <div id="treino-editor" style="display:none">
+        <div class="section-label">Treino</div>
+        <div class="letra-tabs">
+          <button class="letra-btn ativo" onclick="selecionarLetra('A')">A</button>
+          <button class="letra-btn" onclick="selecionarLetra('B')">B</button>
+          <button class="letra-btn" onclick="selecionarLetra('C')">C</button>
+        </div>
+
+        <div class="section-label">Exercícios</div>
+        <div class="exercicios-adicionados" id="lista-ex-admin"></div>
+
+        <button class="btn-add-ex" onclick="abrirBusca()">
+          <span class="plus">+</span> Adicionar exercício
+        </button>
+        <button class="btn-salvar-treino" onclick="salvarTreinoAluno()">Salvar Treino do Aluno</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY DE BUSCA -->
+  <div class="overlay" id="overlay-busca" onclick="fecharBusca(event)">
+    <div class="popup">
+      <div class="popup-handle"></div>
+      <div class="popup-head">
+        <div class="popup-title">Buscar Exercício</div>
+        <button class="popup-fechar" onclick="fecharBusca()">✕</button>
+      </div>
+      <input class="busca-input" type="text" id="campo-busca" placeholder="Digite para buscar..." oninput="buscar()" />
+      <div class="grupos-scroll" id="grupos-scroll"></div>
+      <div class="resultados" id="resultados"></div>
+    </div>
+  </div>
+
+  <!-- OVERLAY DE CONFIGURAÇÃO -->
+  <div class="overlay2" id="overlay-config">
+    <div class="popup2">
+      <div class="popup2-handle"></div>
+      <div class="popup2-head">
+        <button class="popup2-voltar" onclick="voltarParaBusca()">←</button>
+        <div>
+          <div class="popup2-title" id="config-nome">Exercício</div>
+          <div class="popup2-grupo" id="config-grupo"></div>
+        </div>
+      </div>
+      <div class="popup-grid">
+        <div class="input-wrap">
+          <label>Séries</label>
+          <input type="number" id="config-series" value="3" min="1" />
+        </div>
+        <div class="input-wrap">
+          <label>Carga (kg)</label>
+          <input type="number" id="config-carga" value="0" min="0" step="0.5" />
+        </div>
+        <div class="input-wrap">
+          <label>Reps</label>
+          <input type="number" id="config-reps" value="12" min="1" />
+        </div>
+      </div>
+      <button class="btn-confirmar" onclick="confirmarExercicio()">Adicionar ao Treino</button>
     </div>
   </div>
 
@@ -153,7 +269,7 @@
 
     function trocarTab(nome) {
       document.querySelectorAll('.tab').forEach((t, i) => {
-        const nomes = ['dashboard', 'alunos', 'conteudo', 'ranking'];
+        const nomes = ['dashboard', 'alunos', 'conteudo', 'treinos'];
         t.classList.toggle('ativo', nomes[i] === nome);
       });
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('ativo'));
@@ -290,32 +406,225 @@
       } catch (e) {}
     }
 
-    async function carregarRanking() {
+    // ── TREINOS DO ALUNO (gerenciado pelo personal) ──
+    let alunoSelecionadoId = null;
+    let letraAtual = 'A';
+    let treinoIdAtual = null;
+    let exercicios = [];
+    let catalogo = [];
+    let grupoAtivo = 'Todos';
+    let exSelecionado = null;
+
+    async function carregarAlunosSelect() {
       try {
-        const resp = await fetch(`${API}/admin/ranking`);
-        const ranking = await resp.json();
-        const lista = document.getElementById('lista-ranking');
-        lista.innerHTML = '';
-        ranking.forEach((a, i) => {
-          const item = document.createElement('div');
-          item.className = 'rank-item';
-          item.innerHTML = `
-            <div class="rank-pos ${i < 3 ? 'top' : ''}">${i + 1}</div>
-            <div class="rank-nome">${a.nome}</div>
-            <div>
-              <div class="rank-count">${a.total}</div>
-              <div class="rank-unit">treinos</div>
-            </div>
-          `;
-          lista.appendChild(item);
+        const resp = await fetch(`${API}/admin/alunos`);
+        const alunos = await resp.json();
+        const select = document.getElementById('select-aluno');
+        alunos.forEach(a => {
+          const opt = document.createElement('option');
+          opt.value = a.id;
+          opt.textContent = a.nome;
+          select.appendChild(opt);
         });
       } catch (e) {}
+    }
+
+    async function carregarCatalogo() {
+      try {
+        const resp = await fetch(`${API}/catalogo`);
+        catalogo = await resp.json();
+        renderGrupos();
+        renderResultados(catalogo);
+      } catch (e) {}
+    }
+
+    function onAlunoChange() {
+      const val = document.getElementById('select-aluno').value;
+      if (!val) {
+        document.getElementById('treino-editor').style.display = 'none';
+        alunoSelecionadoId = null;
+        return;
+      }
+      alunoSelecionadoId = val;
+      document.getElementById('treino-editor').style.display = 'block';
+      letraAtual = 'A';
+      document.querySelectorAll('.letra-btn').forEach((b, i) => b.classList.toggle('ativo', i === 0));
+      carregarTreinoAluno();
+    }
+
+    function selecionarLetra(letra) {
+      letraAtual = letra;
+      document.querySelectorAll('.letra-btn').forEach(b => b.classList.toggle('ativo', b.textContent === letra));
+      carregarTreinoAluno();
+    }
+
+    async function carregarTreinoAluno() {
+      if (!alunoSelecionadoId) return;
+      const lista = document.getElementById('lista-ex-admin');
+      lista.innerHTML = '<div style="font-size:13px; color:#333; padding: 4px 0;">Carregando...</div>';
+      try {
+        const resp = await fetch(`${API}/admin/treino_aluno/${alunoSelecionadoId}/${letraAtual}`);
+        const dados = await resp.json();
+        treinoIdAtual = dados.treino_id;
+        exercicios = dados.exercicios.map(e => ({
+          nome: e.nome, grupo: 'Carregado',
+          series: e.series, carga: e.carga, repeticoes: e.repeticoes
+        }));
+        renderLista();
+      } catch (e) {
+        lista.innerHTML = '<div style="font-size:13px; color:#E84000; padding: 4px 0;">Erro ao carregar treino.</div>';
+      }
+    }
+
+    function renderGrupos() {
+      const grupos = ['Todos', ...new Set(catalogo.map(e => e.grupo))];
+      const scroll = document.getElementById('grupos-scroll');
+      scroll.innerHTML = '';
+      grupos.forEach(g => {
+        const btn = document.createElement('button');
+        btn.className = 'grupo-btn' + (g === grupoAtivo ? ' ativo' : '');
+        btn.textContent = g;
+        btn.onclick = () => {
+          grupoAtivo = g;
+          document.querySelectorAll('.grupo-btn').forEach(b => b.classList.remove('ativo'));
+          btn.classList.add('ativo');
+          buscar();
+        };
+        scroll.appendChild(btn);
+      });
+    }
+
+    function buscar() {
+      const termo = document.getElementById('campo-busca').value.toLowerCase();
+      let filtrado = catalogo.filter(e => e.nome.toLowerCase().includes(termo));
+      if (grupoAtivo !== 'Todos') filtrado = filtrado.filter(e => e.grupo === grupoAtivo);
+      renderResultados(filtrado);
+    }
+
+    function renderResultados(lista) {
+      const container = document.getElementById('resultados');
+      container.innerHTML = '';
+      if (lista.length === 0) {
+        container.innerHTML = `<div class="vazio-busca">Nenhum exercício encontrado.<br><span style="color:#E84000; cursor:pointer" onclick="adicionarPersonalizado()">+ Adicionar exercício personalizado</span></div>`;
+        return;
+      }
+      lista.forEach(ex => {
+        const item = document.createElement('div');
+        item.className = 'resultado-item';
+        item.innerHTML = `
+          <div>
+            <div class="resultado-nome">${ex.nome}</div>
+            <div class="resultado-grupo">${ex.grupo}</div>
+          </div>
+          <div class="resultado-plus">+</div>
+        `;
+        item.onclick = () => abrirConfig(ex);
+        container.appendChild(item);
+      });
+    }
+
+    function adicionarPersonalizado() {
+      const termo = document.getElementById('campo-busca').value;
+      abrirConfig({ nome: termo, grupo: 'Personalizado' });
+    }
+
+    function abrirBusca() {
+      document.getElementById('campo-busca').value = '';
+      grupoAtivo = 'Todos';
+      renderGrupos();
+      renderResultados(catalogo);
+      document.getElementById('overlay-busca').classList.add('aberto');
+    }
+
+    function fecharBusca(e) {
+      if (!e || e.target === document.getElementById('overlay-busca')) {
+        document.getElementById('overlay-busca').classList.remove('aberto');
+      }
+    }
+
+    function voltarParaBusca() {
+      document.getElementById('overlay-config').classList.remove('aberto');
+      document.getElementById('overlay-busca').classList.add('aberto');
+    }
+
+    function abrirConfig(ex) {
+      exSelecionado = ex;
+      document.getElementById('config-nome').textContent = ex.nome;
+      document.getElementById('config-grupo').textContent = ex.grupo;
+      document.getElementById('config-series').value = 3;
+      document.getElementById('config-carga').value = 0;
+      document.getElementById('config-reps').value = 12;
+      document.getElementById('overlay-busca').classList.remove('aberto');
+      document.getElementById('overlay-config').classList.add('aberto');
+    }
+
+    function confirmarExercicio() {
+      const series = parseInt(document.getElementById('config-series').value) || 3;
+      const carga = parseFloat(document.getElementById('config-carga').value) || 0;
+      const reps = parseInt(document.getElementById('config-reps').value) || 12;
+      exercicios.push({ nome: exSelecionado.nome, grupo: exSelecionado.grupo, series, carga, repeticoes: reps });
+      document.getElementById('overlay-config').classList.remove('aberto');
+      renderLista();
+    }
+
+    function renderLista() {
+      const lista = document.getElementById('lista-ex-admin');
+      lista.innerHTML = '';
+      if (exercicios.length === 0) {
+        lista.innerHTML = '<div style="font-size:13px; color:#333; padding: 4px 0;">Nenhum exercício neste treino ainda.</div>';
+        return;
+      }
+      exercicios.forEach((ex, i) => {
+        const item = document.createElement('div');
+        item.className = 'ex-adicionado';
+        item.innerHTML = `
+          <div>
+            <div class="ex-ad-grupo">${ex.grupo}</div>
+            <div class="ex-ad-nome">${ex.nome}</div>
+            <div class="ex-ad-meta">${ex.series} séries · ${ex.carga}kg · ${ex.repeticoes} reps</div>
+          </div>
+          <button class="btn-remover" onclick="remover(${i})">✕</button>
+        `;
+        lista.appendChild(item);
+      });
+    }
+
+    function remover(i) {
+      exercicios.splice(i, 1);
+      renderLista();
+    }
+
+    async function salvarTreinoAluno() {
+      if (!alunoSelecionadoId) { alert('Selecione um aluno primeiro.'); return; }
+      if (exercicios.length === 0) { alert('Adicione pelo menos um exercício.'); return; }
+      try {
+        let resp;
+        if (treinoIdAtual) {
+          resp = await fetch(`${API}/treinos/${treinoIdAtual}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome: `Treino ${letraAtual}`, exercicios })
+          });
+        } else {
+          resp = await fetch(`${API}/treinos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ usuario_id: alunoSelecionadoId, nome: `Treino ${letraAtual}`, exercicios })
+          });
+        }
+        const dados = await resp.json();
+        if (dados.sucesso) {
+          if (dados.treino_id) treinoIdAtual = dados.treino_id;
+          alert(`Treino ${letraAtual} do aluno salvo com sucesso!`);
+        }
+      } catch (e) { alert('Erro ao salvar treino.'); }
     }
 
     carregarDashboard();
     carregarAlunos();
     carregarAvisos();
-    carregarRanking();
+    carregarAlunosSelect();
+    carregarCatalogo();
   </script>
 </body>
 </html>

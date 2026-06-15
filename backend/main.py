@@ -104,6 +104,39 @@ def get_treino(usuario_id, letra):
         for e in exercicios
     ])
 
+# ── ADMIN: TREINO A/B/C DO ALUNO (busca ou cria) ───
+@app.route("/admin/treino_aluno/<int:usuario_id>/<string:letra>", methods=["GET"])
+def admin_treino_aluno(usuario_id, letra):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT id FROM treinos WHERE usuario_id = %s AND nome ILIKE %s",
+        (usuario_id, f"%Treino {letra}%")
+    )
+    treino = cursor.fetchone()
+
+    if not treino:
+        conn.close()
+        return jsonify({"treino_id": None, "exercicios": []})
+
+    treino_id = treino[0]
+
+    cursor.execute(
+        "SELECT nome, series, carga, repeticoes FROM exercicios WHERE treino_id = %s",
+        (treino_id,)
+    )
+    exercicios = cursor.fetchall()
+    conn.close()
+
+    return jsonify({
+        "treino_id": treino_id,
+        "exercicios": [
+            {"nome": e[0], "series": e[1], "carga": float(e[2]) if e[2] else 0, "repeticoes": e[3]}
+            for e in exercicios
+        ]
+    })
+
 # ── CRIAR TREINO ───────────────────────────────────
 @app.route("/treinos", methods=["POST"])
 def criar_treino():
