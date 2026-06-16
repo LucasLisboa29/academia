@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitCode — Mapa da Academia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #080808; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Barlow', sans-serif; }
+
+    .phone { width: 380px; min-height: 780px; background: #16181d; border-radius: 40px; overflow: hidden; display: flex; flex-direction: column; padding: 32px 0 40px; border: 1.5px solid #1e1e1e; }
+
+    .topbar { display: flex; align-items: center; gap: 14px; padding: 0 24px 18px; }
+    .back-btn { width: 36px; height: 36px; border-radius: 10px; background: #141414; border: 1px solid #222; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; cursor: pointer; text-decoration: none; }
+    .screen-title { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 700; color: #fff; }
+
+    .dica { font-size: 12px; color: #888; padding: 0 24px 14px; }
+    .dica span { color: #E84000; }
+
+    /* MAPA */
+    .mapa-scroll { overflow-x: auto; padding: 0 16px 8px; flex-shrink: 0; }
+    .mapa-scroll::-webkit-scrollbar { height: 4px; }
+    .mapa-scroll::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .mapa-wrap { position: relative; width: 560px; border-radius: 16px; overflow: hidden; border: 1px solid #222; background: #0d0d0d; }
+    .mapa-img { display: block; width: 100%; height: auto; }
+    .mapa-fallback { display: none; padding: 40px 20px; text-align: center; color: #555; font-size: 13px; line-height: 1.6; }
+
+    /* MARCADORES */
+    .marcador { position: absolute; transform: translate(-50%, -50%); width: 22px; height: 22px; border-radius: 50%; background: #E84000; border: 2px solid #fff; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; box-shadow: 0 0 0 0 #E8400080; animation: pulso 2s infinite; transition: transform 0.15s; z-index: 2; }
+    .marcador:hover { transform: translate(-50%, -50%) scale(1.2); }
+    .marcador.ativo { background: #fff; color: #E84000; animation: none; transform: translate(-50%, -50%) scale(1.25); }
+    @keyframes pulso {
+      0% { box-shadow: 0 0 0 0 #E8400070; }
+      70% { box-shadow: 0 0 0 10px #E8400000; }
+      100% { box-shadow: 0 0 0 0 #E8400000; }
+    }
+
+    /* PAINEL DE DETALHE */
+    .detalhe { margin: 16px 20px 0; background: #111; border: 1px solid #1e1e1e; border-left: 3px solid #E84000; border-radius: 14px; padding: 16px; min-height: 92px; display: flex; flex-direction: column; justify-content: center; }
+    .detalhe-grupo { font-size: 10px; color: #E84000; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+    .detalhe-nome { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .detalhe-desc { font-size: 13px; color: #888; line-height: 1.5; }
+    .detalhe-vazio { font-size: 13px; color: #555; text-align: center; }
+
+    /* LEGENDA */
+    .legenda { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 20px 0; }
+    .legenda-item { font-size: 11px; color: #777; background: #111; border: 1px solid #1e1e1e; border-radius: 20px; padding: 5px 12px; cursor: pointer; transition: all 0.2s; }
+    .legenda-item:hover { border-color: #E8400050; color: #E84000; }
+  </style>
+  <script src="config.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="topbar">
+      <a class="back-btn" href="home.html">←</a>
+      <div class="screen-title">Mapa da Academia</div>
+    </div>
+
+    <div class="dica">Toque nos <span>pontos laranja</span> para ver cada área e equipamento.</div>
+
+    <div class="mapa-scroll">
+      <div class="mapa-wrap" id="mapa-wrap">
+        <img class="mapa-img" id="mapa-img" src="assets/mapa-academia.jpg" alt="Mapa da academia"
+             onerror="document.getElementById('mapa-img').style.display='none'; document.getElementById('mapa-fallback').style.display='block';" />
+        <div class="mapa-fallback" id="mapa-fallback">
+          ⚠️ Imagem do mapa não encontrada.<br>
+          Salve o arquivo em <strong>assets/mapa-academia.jpg</strong>
+        </div>
+        <!-- marcadores inseridos via JS -->
+      </div>
+    </div>
+
+    <div class="detalhe" id="detalhe">
+      <div class="detalhe-vazio" id="detalhe-vazio">Nenhuma área selecionada — toque em um ponto no mapa.</div>
+      <div id="detalhe-conteudo" style="display:none">
+        <div class="detalhe-grupo" id="detalhe-grupo"></div>
+        <div class="detalhe-nome" id="detalhe-nome"></div>
+        <div class="detalhe-desc" id="detalhe-desc"></div>
+      </div>
+    </div>
+
+    <div class="legenda" id="legenda"></div>
+  </div>
+
+  <script>
+    const id = localStorage.getItem('usuario_id');
+    if (!id) window.location.href = 'index.html';
+
+    // Pontos do mapa — posição em % (x = esquerda, y = topo) relativa à imagem.
+    // Ajuste fino fácil: mude os valores x/y de cada ponto.
+    const pontos = [
+      { x: 18, y: 22, grupo: 'Cardio',     nome: 'Esteiras',            desc: 'Aquecimento e corrida. Ideal para começar o treino ou fazer aeróbico.' },
+      { x: 33, y: 20, grupo: 'Cardio',     nome: 'Bicicletas',          desc: 'Bike ergométrica para aquecimento e queima de calorias com baixo impacto.' },
+      { x: 18, y: 51, grupo: 'Recepção',   nome: 'Recepção',            desc: 'Check-in, atendimento e informações. Fale com a equipe aqui.' },
+      { x: 10, y: 64, grupo: 'Convívio',   nome: 'Área de espera',      desc: 'Espaço de descanso e convivência entre as séries.' },
+      { x: 20, y: 80, grupo: 'Estrutura',  nome: 'Banheiros / Vestiário', desc: 'Vestiários e banheiros para troca de roupa e higiene.' },
+      { x: 46, y: 16, grupo: 'Pernas',     nome: 'Cadeira Extensora',   desc: 'Isolamento de quadríceps. Trabalha a parte da frente da coxa.' },
+      { x: 55, y: 16, grupo: 'Peito',      nome: 'Supino Máquina',      desc: 'Peitoral com trajetória guiada — seguro para cargas maiores.' },
+      { x: 64, y: 16, grupo: 'Costas',     nome: 'Remada Máquina',      desc: 'Costas e dorsais com apoio de tronco.' },
+      { x: 84, y: 16, grupo: 'Peito/Costas', nome: 'Crossover / Polias', desc: 'Cabos para crucifixo, tríceps, costas e muito mais.' },
+      { x: 50, y: 42, grupo: 'Peso livre', nome: 'Halteres',            desc: 'Rack de halteres para exercícios livres de todos os grupos.' },
+      { x: 80, y: 40, grupo: 'Pernas',     nome: 'Smith / Agachamento', desc: 'Barra guiada para agachamento e levantamentos pesados com segurança.' },
+      { x: 47, y: 63, grupo: 'Pernas',     nome: 'Leg Press',           desc: 'Empurra a carga com as pernas — quadríceps, glúteos e posteriores.' },
+      { x: 57, y: 62, grupo: 'Peito',      nome: 'Banco de Supino',     desc: 'Supino reto e inclinado com barra livre.' },
+      { x: 84, y: 66, grupo: 'Funcional',  nome: 'Sala Funcional',      desc: 'Espaço reservado para treino funcional, alongamento e mobilidade.' },
+    ];
+
+    const wrap = document.getElementById('mapa-wrap');
+    const legenda = document.getElementById('legenda');
+
+    function selecionar(i, el) {
+      document.querySelectorAll('.marcador').forEach(m => m.classList.remove('ativo'));
+      if (el) el.classList.add('ativo');
+      const p = pontos[i];
+      document.getElementById('detalhe-vazio').style.display = 'none';
+      document.getElementById('detalhe-conteudo').style.display = 'block';
+      document.getElementById('detalhe-grupo').textContent = p.grupo;
+      document.getElementById('detalhe-nome').textContent = p.nome;
+      document.getElementById('detalhe-desc').textContent = p.desc;
+    }
+
+    pontos.forEach((p, i) => {
+      const m = document.createElement('button');
+      m.className = 'marcador';
+      m.style.left = p.x + '%';
+      m.style.top = p.y + '%';
+      m.textContent = i + 1;
+      m.title = p.nome;
+      m.onclick = () => selecionar(i, m);
+      wrap.appendChild(m);
+
+      const tag = document.createElement('div');
+      tag.className = 'legenda-item';
+      tag.textContent = `${i + 1}. ${p.nome}`;
+      tag.onclick = () => {
+        const marc = wrap.querySelectorAll('.marcador')[i];
+        selecionar(i, marc);
+        marc.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      };
+      legenda.appendChild(tag);
+    });
+  </script>
+</body>
+</html>

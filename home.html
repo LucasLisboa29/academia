@@ -197,6 +197,26 @@
       font-size: 20px;
       color: #E84000;
     }
+
+    .mapa-card {
+      margin: 0 20px 20px;
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .mapa-card:hover { border-color: #E8400050; background: #1a0f0a; }
+    .mapa-card .mapa-icon { font-size: 22px; }
+    .mapa-card .mapa-texto { flex: 1; }
+    .mapa-card .mapa-titulo { font-size: 14px; font-weight: 600; color: #FFFFFF; }
+    .mapa-card .mapa-sub { font-size: 11px; color: #888; margin-top: 2px; }
+    .mapa-card .mapa-seta { color: #E84000; font-size: 20px; }
   </style>
   <script src="config.js"></script>
 </head>
@@ -220,6 +240,15 @@
       <div class="aviso-top">Aviso da academia</div>
       <div class="aviso-text" id="aviso-texto">Carregando avisos...</div>
     </div>
+
+    <a class="mapa-card" href="mapa.html">
+      <span class="mapa-icon">🗺️</span>
+      <div class="mapa-texto">
+        <div class="mapa-titulo">Mapa da academia</div>
+        <div class="mapa-sub">Veja os equipamentos e áreas</div>
+      </div>
+      <span class="mapa-seta">›</span>
+    </a>
 
     <div class="section-title">Seus treinos</div>
 
