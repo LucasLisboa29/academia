@@ -102,18 +102,19 @@
     </div>
   </div>
 
-  <!-- POPUP SÉRIES -->
   <div class="overlay" id="overlay" onclick="fecharPopup(event)">
     <div class="popup" id="popup-content">
       <div class="popup-handle"></div>
-      <div class="popup-title" id="popup-nome">Exercício</div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+        <div class="popup-title" id="popup-nome">Exercício</div>
+        <button onclick="abrirGifExercicio()" style="background: #E8400020; border: 1px solid #E84000; color: #E84000; padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">👁️ Ver Execução</button>
+      </div>
       <div class="popup-ref" id="popup-ref">Referência: <span id="popup-ref-val"></span></div>
       <div id="popup-series-container"></div>
       <button class="btn-confirmar" onclick="confirmarExercicio()">Confirmar</button>
     </div>
   </div>
 
-  <!-- OVERLAY BUSCA EXERCICIO -->
   <div class="overlay2" id="overlay-busca" onclick="fecharBusca(event)">
     <div class="popup2">
       <div class="popup2-handle"></div>
@@ -127,7 +128,6 @@
     </div>
   </div>
 
-  <!-- OVERLAY CONFIG NOVO EXERCICIO -->
   <div class="overlay3" id="overlay-config">
     <div class="popup3">
       <div class="popup3-handle"></div>
@@ -144,6 +144,19 @@
         <div class="input-wrap"><label>Reps</label><input type="number" id="config-reps" value="12" min="1" /></div>
       </div>
       <button class="btn-confirmar" onclick="confirmarNovoExercicio()">Adicionar</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay-gif" onclick="fecharPopupGif(event)">
+    <div class="popup" style="align-items: center; text-align: center;">
+      <div class="popup-handle"></div>
+      <div class="popup-title" id="gif-popup-nome">Demonstração</div>
+      
+      <div style="width: 100%; border-radius: 16px; overflow: hidden; margin: 15px 0; background: #000;">
+        <img id="gif-elemento" src="" alt="Execução do exercício" style="width: 100%; display: block;" />
+      </div>
+      
+      <button class="btn-confirmar" onclick="document.getElementById('overlay-gif').classList.remove('aberto')">Voltar</button>
     </div>
   </div>
 
@@ -399,6 +412,36 @@
           setTimeout(() => { msg.style.display = 'none'; window.location.href = 'home.html'; }, 2000);
         }
       } catch (e) { alert('Erro ao registrar treino.'); }
+    }
+
+    // FUNÇÕES DA LÓGICA DO POPUP DE GIF ADICIONADAS AQUI ABAIXO:
+    function obterCaminhoGif(nomeExercicio) {
+      const nomeMinusculo = nomeExercicio.toLowerCase();
+      
+      if (nomeMinusculo.includes('supino') || nomeMinusculo.includes('peito') || nomeMinusculo.includes('crucifixo')) {
+        return 'assets/supino.gif';
+      } 
+      if (nomeMinusculo.includes('agachamento') || nomeMinusculo.includes('leg press') || nomeMinusculo.includes('extensora') || nomeMinusculo.includes('perna')) {
+        return 'assets/agachamento.gif';
+      } 
+      if (nomeMinusculo.includes('remada') || nomeMinusculo.includes('puxada') || nomeMinusculo.includes('pulley') || nomeMinusculo.includes('costas')) {
+        return 'assets/puxada_alta.gif';
+      }
+      return 'assets/mapa-academia.jpg'; 
+    }
+
+    function abrirGifExercicio() {
+      if (!exAtual) return;
+      document.getElementById('gif-popup-nome').textContent = exAtual.nome;
+      document.getElementById('gif-elemento').src = obterCaminhoGif(exAtual.nome);
+      document.getElementById('overlay-gif').classList.add('aberto');
+    }
+
+    function fecharPopupGif(e) {
+      if (e.target === document.getElementById('overlay-gif')) {
+        document.getElementById('overlay-gif').classList.remove('aberto');
+        document.getElementById('gif-elemento').src = ''; 
+      }
     }
 
     carregarExercicios();
