@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import psycopg2
 import os
-from compilador.integrador import compilar_treino
+from compilador.integrador import compilar_treino, analisar_treino
 
 app = Flask(__name__)
 CORS(app)
@@ -160,13 +160,33 @@ def criar_treino():
             (ex["nome"], ex["series"], ex["carga"], ex["repeticoes"], treino_id)
         )
     
-    resultado = compilar_treino(nome, exercicios)
-    print("Compilador rodou:", resultado["codigo_gerado"])
+    # O compilador calcula as métricas do treino (volume e intensidade).
+    analise = analisar_treino(exercicios)
+    print("Compilador rodou:\n", analise["codigo_gerado"])
 
     conn.commit()
     conn.close()
 
-    return jsonify({"sucesso": True, "treino_id": treino_id})
+    return jsonify({"sucesso": True, "treino_id": treino_id, "analise": analise})
+
+
+# ── ANÁLISE DO TREINO (CALCULADA PELO COMPILADOR) ──
+@app.route("/treino_analise/<int:treino_id>", methods=["GET"])
+def treino_analise(treino_id):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT nome, series, carga, repeticoes FROM exercicios WHERE treino_id = %s",
+        (treino_id,)
+    )
+    exercicios = [
+        {"nome": e[0], "series": e[1], "carga": float(e[2]) if e[2] else 0, "repeticoes": e[3]}
+        for e in cursor.fetchall()
+    ]
+    conn.close()
+
+    # Delegamos o cálculo ao nosso compilador (Lexer -> Parser -> Interpretador).
+    return jsonify(analisar_treino(exercicios))
 
 # ── SERVIR FRONTEND ────────────────────────────────
 @app.route("/")

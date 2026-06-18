@@ -33,6 +33,19 @@
     .btn-registrar:hover { background: #cc3700; }
     .sucesso-msg { display: none; margin: 12px 20px 0; padding: 12px 16px; background: #0a1a0a; border: 1px solid #2a5a2a; border-radius: 10px; font-size: 13px; color: #4caf50; text-align: center; }
 
+    /* ANÁLISE DO TREINO (calculada pelo compilador) */
+    .analise-box { display: none; margin: 0 20px 16px; background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 14px 16px; }
+    .analise-head { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: #666; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .analise-head span { color: #E84000; }
+    .analise-grid { display: flex; align-items: center; gap: 16px; }
+    .analise-card { flex: 1; }
+    .analise-val { font-family: 'Barlow Condensed', sans-serif; font-size: 30px; font-weight: 700; color: #fff; line-height: 1; }
+    .analise-lbl { font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 5px; }
+    .badge-int { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 14px; font-weight: 600; font-family: 'Barlow', sans-serif; }
+    .int-1 { background: #0a1a0a; color: #4caf50; border: 1px solid #4caf5040; }
+    .int-2 { background: #1a150a; color: #F5A623; border: 1px solid #F5A62340; }
+    .int-3 { background: #1a0808; color: #E84000; border: 1px solid #E8400040; }
+
     /* POPUP SERIES */
     .overlay { display: none; position: fixed; inset: 0; background: #00000099; z-index: 100; align-items: flex-end; justify-content: center; }
     .overlay.aberto { display: flex; }
@@ -91,6 +104,19 @@
       <a class="back-btn" href="home.html">←</a>
       <div class="screen-title" id="titulo-treino">TREINO</div>
       <button class="btn-add-topo" id="btn-add-topo" style="display:none" onclick="abrirBusca()">+</button>
+    </div>
+    <div class="analise-box" id="analise-box">
+      <div class="analise-head">⚙ Análise do treino <span>· motor FitCode</span></div>
+      <div class="analise-grid">
+        <div class="analise-card">
+          <div class="analise-val" id="analise-volume">—</div>
+          <div class="analise-lbl">Volume total (kg)</div>
+        </div>
+        <div class="analise-card" style="text-align:right">
+          <span class="badge-int" id="analise-intensidade">—</span>
+          <div class="analise-lbl" style="margin-top:8px">Intensidade</div>
+        </div>
+      </div>
     </div>
     <div class="ex-list" id="lista-exercicios">
       <div style="color:#FFFFFF; font-size:13px; padding:12px 4px;">Carregando exercícios...</div>
@@ -189,10 +215,26 @@
         exerciciosCarregados = dados;
         renderExercicios();
         treinoId = dados[0]?.treino_id || treinoIdParam || null;
+        if (treinoId) carregarAnalise(treinoId);
       } catch (e) {
         document.getElementById('lista-exercicios').innerHTML =
           '<div style="color:#FFFFFF; font-size:13px; padding:12px 4px;">Erro ao carregar exercícios.</div>';
       }
+    }
+
+    // Busca a análise CALCULADA PELO COMPILADOR e exibe.
+    async function carregarAnalise(tid) {
+      try {
+        const resp = await fetch(`${API}/treino_analise/${tid}`);
+        const a = await resp.json();
+        if (!a || !a.sucesso) return;
+        document.getElementById('analise-volume').textContent =
+          a.volume_total.toLocaleString('pt-BR');
+        const badge = document.getElementById('analise-intensidade');
+        badge.textContent = a.intensidade;
+        badge.className = 'badge-int int-' + a.intensidade_nivel;
+        document.getElementById('analise-box').style.display = 'block';
+      } catch (e) { /* análise é opcional, não quebra a tela */ }
     }
 
     function renderExercicios() {
