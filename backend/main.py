@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import psycopg2
 import os
-from compilador.integrador import compilar_treino, analisar_treino
+from compilador.integrador import analisar_treino, montar_treino
 
 app = Flask(__name__)
 CORS(app)
@@ -154,20 +154,22 @@ def criar_treino():
     )
     treino_id = cursor.fetchone()[0]
 
-    for ex in exercicios:
+    # O INTERPRETADOR constrói o treino: o app gera um programa na linguagem
+    # FitCode, executa, e os exercícios gravados são os que o interpretador
+    # produziu (com cargas/expressões já resolvidas).
+    montagem = montar_treino(exercicios)
+    print("Programa executado pelo compilador:\n", montagem["codigo_gerado"])
+
+    for ex in montagem["exercicios"]:
         cursor.execute(
             "INSERT INTO exercicios (nome, series, carga, repeticoes, treino_id) VALUES (%s, %s, %s, %s, %s)",
             (ex["nome"], ex["series"], ex["carga"], ex["repeticoes"], treino_id)
         )
-    
-    # O compilador calcula as métricas do treino (volume e intensidade).
-    analise = analisar_treino(exercicios)
-    print("Compilador rodou:\n", analise["codigo_gerado"])
 
     conn.commit()
     conn.close()
 
-    return jsonify({"sucesso": True, "treino_id": treino_id, "analise": analise})
+    return jsonify({"sucesso": True, "treino_id": treino_id, "analise": montagem})
 
 
 # ── ANÁLISE DO TREINO (CALCULADA PELO COMPILADOR) ──
@@ -399,7 +401,9 @@ def editar_treino(treino_id):
 
     cursor.execute("DELETE FROM exercicios WHERE treino_id = %s", (treino_id,))
 
-    for ex in exercicios:
+    # Os exercícios são reconstruídos executando o programa no interpretador.
+    montagem = montar_treino(exercicios)
+    for ex in montagem["exercicios"]:
         cursor.execute(
             "INSERT INTO exercicios (nome, series, carga, repeticoes, treino_id) VALUES (%s, %s, %s, %s, %s)",
             (ex["nome"], ex["series"], ex["carga"], ex["repeticoes"], treino_id)
@@ -407,7 +411,7 @@ def editar_treino(treino_id):
 
     conn.commit()
     conn.close()
-    return jsonify({"sucesso": True})
+    return jsonify({"sucesso": True, "analise": montagem})
 
 @app.route("/exercicio", methods=["POST"])
 def adicionar_exercicio():
@@ -418,11 +422,17 @@ def adicionar_exercicio():
     carga = dados["carga"]
     repeticoes = dados["repeticoes"]
 
+    # O exercício é gravado a partir da execução do programa no interpretador.
+    montagem = montar_treino([
+        {"nome": nome, "series": series, "carga": carga, "repeticoes": repeticoes}
+    ])
+    ex = montagem["exercicios"][0]
+
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO exercicios (nome, series, carga, repeticoes, treino_id) VALUES (%s, %s, %s, %s, %s)",
-        (nome, series, carga, repeticoes, treino_id)
+        (ex["nome"], ex["series"], ex["carga"], ex["repeticoes"], treino_id)
     )
     conn.commit()
     conn.close()

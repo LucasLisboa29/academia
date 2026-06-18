@@ -25,11 +25,21 @@ class Lexer:
         res = ""
         while self.char and (self.char.isalnum() or self.char == '_'): res += self.char; self.advance()
         keywords = {
-            "mostrar": TipoToken.EXIBIR, "checar": TipoToken.CHECAR,
-            "senao": TipoToken.SENAO, "criar": TipoToken.ATRIBUTO,
-            "e": TipoToken.AND, "ou": TipoToken.OR
+            "criar": TipoToken.ATRIBUTO, "mostrar": TipoToken.EXIBIR,
+            "checar": TipoToken.CHECAR, "senao": TipoToken.SENAO,
+            "adicionar": TipoToken.ADICIONAR
         }
         return Token(keywords.get(res, TipoToken.IDENTIFICADOR), res)
+
+    def ler_texto(self):
+        # lê uma string literal entre aspas: "Supino reto"
+        self.advance()  # consome a aspa de abertura
+        res = ""
+        while self.char is not None and self.char != '"':
+            res += self.char
+            self.advance()
+        self.advance()  # consome a aspa de fechamento
+        return Token(TipoToken.TEXTO, res)
 
     def get_tokens(self):
         tokens = []
@@ -37,35 +47,20 @@ class Lexer:
             if self.char.isspace(): self.skip_whitespace(); continue
             if self.char.isdigit(): tokens.append(self.numero()); continue
             if self.char.isalpha(): tokens.append(self.identificador()); continue
+            if self.char == '"': tokens.append(self.ler_texto()); continue
 
-            # Operadores Relacionais e Atribuição
-            if self.char == '=':
-                self.advance()
-                if self.char == '=': tokens.append(Token(TipoToken.IGUAL_IGUAL, '==')); self.advance()
-                else: tokens.append(Token(TipoToken.IGUAL, '='))
-                continue
-            elif self.char == '>':
-                self.advance()
-                if self.char == '=': tokens.append(Token(TipoToken.MAIOR_IGUAL, '>=')); self.advance()
-                else: tokens.append(Token(TipoToken.MAIOR, '>'))
-                continue
-            elif self.char == '<':
-                self.advance()
-                if self.char == '=': tokens.append(Token(TipoToken.MENOR_IGUAL, '<=')); self.advance()
-                else: tokens.append(Token(TipoToken.MENOR, '<'))
-                continue
-            
-            # Outros Símbolos
             simbolos = {
-                '+': TipoToken.SOMA, '-': TipoToken.SUBTRACAO, '*': TipoToken.MULTIPLICACAO,
-                '/': TipoToken.DIVISAO, '^': TipoToken.POTENCIA, '(': TipoToken.ABRE_PARENTESES,
-                ')': TipoToken.FECHA_PARENTESES, '{': TipoToken.ABRE_BLOCO, '}': TipoToken.FECHA_BLOCO,
-                '%': TipoToken.MODULO, ';': TipoToken.PONTO_VIRGULA
+                '+': TipoToken.SOMA, '*': TipoToken.MULTIPLICACAO,
+                '(': TipoToken.ABRE_PARENTESES, ')': TipoToken.FECHA_PARENTESES,
+                '{': TipoToken.ABRE_BLOCO, '}': TipoToken.FECHA_BLOCO,
+                '=': TipoToken.IGUAL, '>': TipoToken.MAIOR,
+                ';': TipoToken.PONTO_VIRGULA, ',': TipoToken.VIRGULA
             }
             if self.char in simbolos:
                 tokens.append(Token(simbolos[self.char], self.char))
-            else: raise Exception(f"Erro: {self.char}")
+            else:
+                raise Exception(f"Erro: {self.char}")
             self.advance()
-            
+
         tokens.append(Token(TipoToken.EOF, None))
         return tokens
